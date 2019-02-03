@@ -1,0 +1,18 @@
+version: "2.3"
+services:
+  itransfer-frontend:
+    container_name: "itransfer-frontend"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: docker
+    volumes:
+      - ./:/usr/src/app
+      - itransfer-frontend-node-modules:/usr/src/app/node_modules
+    command: npm start
+
+volumes:
+  itransfer-frontend-node-modules:
