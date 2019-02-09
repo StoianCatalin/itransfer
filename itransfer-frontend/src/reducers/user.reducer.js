@@ -4,7 +4,7 @@ const initialState = {
     role: '',
     email: '',
     password: '',
-    authenticated: false,
+    authenticated: true,
 };
 
 export function userReducer(state = initialState, action) {

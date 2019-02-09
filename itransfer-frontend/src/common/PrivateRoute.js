@@ -3,11 +3,6 @@ import {Redirect, Route, withRouter} from 'react-router-dom';
 import {connect} from "react-redux";
 
 class PrivateRoute extends React.Component {
-
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         if (this.props.authenticated) {
             return <Route {...this.props} />;

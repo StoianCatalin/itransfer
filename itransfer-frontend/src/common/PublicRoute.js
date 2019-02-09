@@ -4,10 +4,6 @@ import {connect} from "react-redux";
 
 class PublicRoute extends React.Component {
 
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         if (!this.props.authenticated) {
             return <Route {...this.props} />;
