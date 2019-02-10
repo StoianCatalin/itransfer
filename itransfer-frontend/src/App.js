@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Switch } from "react-router-dom";
+import { Router, Switch } from "react-router-dom";
 import './App.scss';
 import LoginPage from './pages/Login/Login.page';
-import HomePage from './pages/Home/Home.page';
 import configureStore from './reducers/store';
 import { Provider } from 'react-redux';
 import PrivateRoute from "./common/PrivateRoute";
 import PublicRoute from "./common/PublicRoute";
+import DashboardLayout from "./components/layout/Dashboard.layout";
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { history } from './reducers/history';
 
 const store = configureStore({});
 
@@ -14,10 +16,11 @@ class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <Router>
+        <CssBaseline />
+        <Router history={history}>
           <Switch>
-            <PrivateRoute exact path="/" component={HomePage} />
             <PublicRoute exact path="/login" component={LoginPage} />
+            <PrivateRoute path="/" component={DashboardLayout} />
           </Switch>
         </Router>
       </Provider>
