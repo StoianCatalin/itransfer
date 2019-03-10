@@ -10,12 +10,12 @@ import PrivateRoute from "../../common/PrivateRoute";
 import HomePage from "../../pages/Home/Home.page";
 import UsersPage from "../../pages/Users/Users.page";
 import {connect} from "react-redux";
+import UserEditPage from "../../pages/Users/edit/UserEdit.page";
 
 class DashboardLayout extends Component {
 
   constructor(props) {
     super(props);
-    console.log(props.location);
     this.state = {
       anchorEl: null,
       currentPage: props.location.pathname
@@ -97,7 +97,8 @@ class DashboardLayout extends Component {
               </Tabs>
               <div className="page">
                 <PrivateRoute path="(/|/dashboard)/" component={HomePage}/>
-                <PrivateRoute path="/users" component={UsersPage}/>
+                <PrivateRoute exact path="/users" component={UsersPage}/>
+                <PrivateRoute path="/users/:id/edit" component={UserEditPage}/>
               </div>
             </div>
           </Router>
