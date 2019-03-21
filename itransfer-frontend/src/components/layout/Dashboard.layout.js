@@ -9,8 +9,10 @@ import { history } from '../../reducers/history';
 import PrivateRoute from "../../common/PrivateRoute";
 import HomePage from "../../pages/Home/Home.page";
 import UsersPage from "../../pages/Users/Users.page";
+import SpacesPage from "../../pages/Spaces/Spaces.page";
 import {connect} from "react-redux";
 import UserEditPage from "../../pages/Users/edit/UserEdit.page";
+import ProfilePage from '../../pages/Profile/Profile.page';
 
 class DashboardLayout extends Component {
 
@@ -23,6 +25,7 @@ class DashboardLayout extends Component {
   }
 
   navigate(path) {
+    this.setState({ anchorEl: null });
     this.props.history.push(path);
     this.setState({
       currentPage: path,
@@ -70,7 +73,7 @@ class DashboardLayout extends Component {
                   },
                 }}
               >
-                <MenuItem key="profile" onClick={this.handleClose}>
+                <MenuItem key="profile" onClick={() => {this.navigate("/profile")}} >
                   Profile
                 </MenuItem>
                 <MenuItem key="logout" onClick={this.handleClose}>
@@ -93,12 +96,14 @@ class DashboardLayout extends Component {
               >
                 <Tab value="/dashboard" label="Dashboard" onClick={() => {this.navigate("/dashboard")}} />
                 <Tab value="/users" label="Users" onClick={() => {this.navigate("/users")}} />
-                <Tab value="/spaces" label="Spaces" />
+                <Tab value="/spaces" label="Spaces" onClick={() => {this.navigate("/spaces")}} />
               </Tabs>
               <div className="page">
                 <PrivateRoute path="(/|/dashboard)/" component={HomePage}/>
                 <PrivateRoute exact path="/users" component={UsersPage}/>
                 <PrivateRoute path="/users/:id/edit" component={UserEditPage}/>
+                <PrivateRoute path="/spaces" component={SpacesPage}/>
+                <PrivateRoute path="/profile" component={ProfilePage}/>
               </div>
             </div>
           </Router>
