@@ -4,11 +4,13 @@ const bodyParser = require('koa-bodyparser');
 const cors = require('kcors');
 const { sequelize } = require('./models/DatabaseConnection');
 const statusController = require('./controllers/status.controller');
+const authController = require('./controllers/auth.controller');
+const usersController = require('./controllers/users.controller');
 const app = new Koa();
 const port = 3001;
 
 sequelize
-  .sync({ force: true })
+  .sync({ force: false })
   .then(() => {
     console.log('Connection has been established successfully.');
   })
@@ -20,6 +22,8 @@ sequelize
 app.use(bodyParser());
 app.use(cors());
 
+app.use(authController.router.prefix('/auth').routes());
+app.use(usersController.router.prefix('/users').routes());
 app.use(statusController.router.routes());
 
 const server = http.createServer(app.callback());
