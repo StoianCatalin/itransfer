@@ -6,17 +6,20 @@ const isAuthenticated = async (ctx, next) => {
   if (!header) {
     ctx.response.status = 401;
     ctx.response.body = { message: 'Header missing' };
+    return;
   }
   const parts = header.split(' ');
   if (parts[0] !== 'Bearer') {
     ctx.response.status = 400;
     ctx.response.body = { message: 'Invalid token type' };
+    return;
   }
   try {
     ctx.state.user = jsonwebtoken.verify(parts[1], jwtKey);
   } catch (e) {
     ctx.response.status = 400;
     ctx.response.body = { message: 'Invalid token' };
+    return;
   }
   await next();
 };

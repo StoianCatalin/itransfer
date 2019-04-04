@@ -8,9 +8,21 @@ module.exports = (sequelize, type) => {
       primaryKey: true,
       autoIncrement: true
     },
-    name: {
+    full_name: {
       type: Sequelize.STRING,
       allowNull: false
+    },
+    cnp: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    id_number: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    address: {
+      type: Sequelize.STRING,
+      allowNull: false,
     },
     email: {
       type: Sequelize.STRING,
@@ -20,6 +32,10 @@ module.exports = (sequelize, type) => {
     password: {
       type: Sequelize.STRING,
     },
+    role: {
+      type: Sequelize.NUMBER,
+      defaultValue: 0
+    }
   })
 };
 

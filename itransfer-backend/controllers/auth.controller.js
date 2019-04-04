@@ -11,20 +11,24 @@ router.post('/login', async (ctx, next) => {
   if (!email || !password) {
     ctx.response.status = 409;
     ctx.response.body = { message: 'Email or password is missing' };
+    return;
   }
   const user = await UserModel.findOne({
     where: {
       email
     }
   });
-  if (!user.id) {
+  if (!user) {
     ctx.response.status = 409;
     ctx.response.body = { message: 'Email or password are wrong' };
+    return;
   }
   const hashedPassword = md5(password);
+  console.log('=======>', hashedPassword, user.password);
   if (user.password !== hashedPassword) {
     ctx.response.status = 409;
     ctx.response.body = { message: 'Email or password are wrong' };
+    return;
   }
   const token = jsonwebtoken.sign({
     email: user.email,
@@ -32,7 +36,12 @@ router.post('/login', async (ctx, next) => {
     id: user.id,
   }, jwtKey, { expiresIn: 60 * 60 });
   ctx.response.status = 200;
-  ctx.response.body = { token };
+  ctx.response.body = {
+      token,
+      email: user.email,
+      name: user.name,
+      id: user.id,
+    };
   await next();
 });
 

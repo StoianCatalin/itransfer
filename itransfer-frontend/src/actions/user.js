@@ -1,8 +1,8 @@
-import { CREATE_USER } from './actionTypes';
+import {LOGIN_USER} from './actionTypes';
 
-function createUser(user) {
+export function loginUser(user) {
     return {
-        type: CREATE_USER,
-        payload: user,
+        type: LOGIN_USER,
+        payload: user
     }
 }

@@ -4,8 +4,16 @@ import './LoginPage.scss';
 import computerSVG from '../../assets/computer.svg';
 import Logo from '../../logo-itransfer.png';
 import {validateEmail} from "../../validators/email";
+import {withRouter} from "react-router-dom";
+import {connect} from "react-redux";
+import {loginUser} from "../../actions/user";
+import AuthService from "../../services/auth.service";
+import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import {closeSnackbar, openSnackbar} from "../../actions/snackbar";
 
-export default class LoginPage extends Component {
+class LoginPage extends Component {
 
     constructor(props) {
         super(props);
@@ -18,7 +26,13 @@ export default class LoginPage extends Component {
                 touched: false,
                 value: '',
             },
-        }
+        };
+        this.authService = new AuthService();
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        console.log(nextProps);
+        this.setState({ ...nextProps });
     }
 
     handleChange(name) {
@@ -60,8 +74,24 @@ export default class LoginPage extends Component {
         } else return '';
     }
 
-    onSubmit() {
-        // logic of login here
+    async onSubmit() {
+        if (!this.isErrorOnEmail && !this.isErrorOnPassword) {
+            try {
+                const response = await this.authService.login(this.state.email.value, this.state.password.value);
+                console.log(response);
+                if (response.status === 200) {
+                    this.props.login(response.data);
+                }
+            } catch (e) {
+                this.props.openSnackbar(e.response.data.message);
+                this.state.email = { value: '', touched: false };
+                this.state.password = { value: '', touched: false };
+            }
+            this.setState({
+                email: { value: '', touched: false },
+                password: { value: '', touched: false }
+            });
+        }
     }
 
     render() {
@@ -107,7 +137,54 @@ export default class LoginPage extends Component {
                       </div>
                   </div>
               </Card>
+              <Snackbar
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+                open={this.props.snackbar.open}
+                autoHideDuration={6000}
+                onClose={this.handleClose}
+                ContentProps={{
+                    'aria-describedby': 'message-id',
+                }}
+                message={<span id="message-id">{ this.props.snackbar.message }</span>}
+                action={[
+                    <IconButton
+                      key="close"
+                      aria-label="Close"
+                      color="inherit"
+                      onClick={this.props.closeSnackbar}
+                    >
+                        <CloseIcon />
+                    </IconButton>,
+                ]}
+              />
           </div>
         )
     }
 }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        login: (user) => {
+            dispatch(loginUser(user))
+        },
+        openSnackbar: (message) => {
+            dispatch(openSnackbar(message));
+        },
+        closeSnackbar: () => {
+            dispatch(closeSnackbar());
+        }
+    };
+};
+
+const mapStateToProps = state => {
+    return {
+        snackbar: state.snackbar,
+    }
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LoginPage))
+
+
