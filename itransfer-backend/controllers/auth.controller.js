@@ -24,7 +24,6 @@ router.post('/login', async (ctx, next) => {
     return;
   }
   const hashedPassword = md5(password);
-  console.log('=======>', hashedPassword, user.password);
   if (user.password !== hashedPassword) {
     ctx.response.status = 409;
     ctx.response.body = { message: 'Email or password are wrong' };

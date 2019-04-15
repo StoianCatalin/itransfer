@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Card, Icon, Button, TextField } from "@material-ui/core";
 import './LoginPage.scss';
+import { Link } from 'react-router-dom';
 import computerSVG from '../../assets/computer.svg';
 import Logo from '../../logo-itransfer.png';
 import {validateEmail} from "../../validators/email";
@@ -12,6 +13,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import {closeSnackbar, openSnackbar} from "../../actions/snackbar";
+import Divider from '@material-ui/core/Divider';
 
 class LoginPage extends Component {
 
@@ -133,6 +135,10 @@ class LoginPage extends Component {
                                   Login
                                   <Icon>send</Icon>
                               </Button>
+                              <Divider className="divider"/>
+                              <div className="register-link">
+                                  <Link to="/register"><a href="#">You are not registered yet? Register now!</a></Link>
+                              </div>
                           </form>
                       </div>
                   </div>

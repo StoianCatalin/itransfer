@@ -4,7 +4,6 @@ module.exports = (sequelize, type) => {
   return sequelize.define('user', {
     id: {
       type: Sequelize.INTEGER,
-      unique: true,
       primaryKey: true,
       autoIncrement: true
     },
@@ -16,7 +15,7 @@ module.exports = (sequelize, type) => {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    id_number: {
+    identity_number: {
       type: Sequelize.STRING,
       allowNull: false,
     },
@@ -33,8 +32,8 @@ module.exports = (sequelize, type) => {
       type: Sequelize.STRING,
     },
     role: {
-      type: Sequelize.NUMBER,
-      defaultValue: 0
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
     }
   })
 };

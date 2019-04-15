@@ -1,0 +1,256 @@
+{
+  "plans": [
+    {
+      "name": "1 Day membership",
+      "price": 15,
+      "period": "day",
+      "type": 1,
+      "allowMoreThanOne": false,
+      "facilities": [
+        {
+          "name": "one office"
+        },
+        {
+          "name": "free coffee/tea"
+        },
+        {
+          "name": "free wi-fi"
+        },
+        {
+          "name": "free access to the printer"
+        }
+      ]
+    },
+    {
+      "name": "Partial Access",
+      "price": 90,
+      "period": "month",
+      "type": 1,
+      "allowMoreThanOne": false,
+      "facilities": [
+        {
+          "name": "3 days / week"
+        },
+        {
+          "name": "one office"
+        },
+        {
+          "name": "free coffee/tea"
+        },
+        {
+          "name": "free wi-fi"
+        },
+        {
+          "name": "free access to the printer"
+        },
+        {
+          "name": "free parking space near the building"
+        },
+        {
+          "name": "access to locker"
+        }
+      ]
+    },
+    {
+      "name": "Full Access",
+      "price": 140,
+      "period": "month",
+      "type": 1,
+      "allowMoreThanOne": false,
+      "facilities": [
+        {
+          "name": "5 days / week"
+        },
+        {
+          "name": "one office"
+        },
+        {
+          "name": "free coffee/tea"
+        },
+        {
+          "name": "free wi-fi"
+        },
+        {
+          "name": "free access to the printer"
+        },
+        {
+          "name": "free parking space near the building"
+        },
+        {
+          "name": "access to locker"
+        },
+        {
+          "name": "free 2 hours / month in conference room"
+        },
+        {
+          "name": "discount for conferences organized by iTransfer"
+        }
+      ]
+    },
+    {
+      "name": "Team Access",
+      "price": 450,
+      "period": "month",
+      "type": 1,
+      "allowMoreThanOne": true,
+      "facilities": [
+        {
+          "name": "one room with 4-5 offices"
+        },
+        {
+          "name": "5 days / week"
+        },
+        {
+          "name": "one office"
+        },
+        {
+          "name": "free coffee/tea"
+        },
+        {
+          "name": "free wi-fi"
+        },
+        {
+          "name": "free access to the printer"
+        },
+        {
+          "name": "free parking space near the building"
+        },
+        {
+          "name": "access to locker"
+        },
+        {
+          "name": "free 4 hours / month in conference room"
+        },
+        {
+          "name": "discount for conferences organized by iTransfer"
+        }
+      ]
+    },
+    {
+      "name": "1 Day membership for students",
+      "price": 10,
+      "period": "day",
+      "type": 2,
+      "allowMoreThanOne": false,
+      "facilities": [
+        {
+          "name": "one office"
+        },
+        {
+          "name": "free coffee/tea"
+        },
+        {
+          "name": "free wi-fi"
+        },
+        {
+          "name": "free access to the printer"
+        }
+      ]
+    },
+    {
+      "name": "Partial Access for students",
+      "price": 70,
+      "period": "month",
+      "type": 2,
+      "allowMoreThanOne": false,
+      "facilities": [
+        {
+          "name": "3 days / week"
+        },
+        {
+          "name": "one office"
+        },
+        {
+          "name": "free coffee/tea"
+        },
+        {
+          "name": "free wi-fi"
+        },
+        {
+          "name": "free access to the printer"
+        },
+        {
+          "name": "free parking space near the building"
+        },
+        {
+          "name": "access to locker"
+        }
+      ]
+    },
+    {
+      "name": "Full Access for students",
+      "price": 120,
+      "period": "month",
+      "type": 2,
+      "allowMoreThanOne": false,
+      "facilities": [
+        {
+          "name": "5 days / week"
+        },
+        {
+          "name": "one office"
+        },
+        {
+          "name": "free coffee/tea"
+        },
+        {
+          "name": "free wi-fi"
+        },
+        {
+          "name": "free access to the printer"
+        },
+        {
+          "name": "free parking space near the building"
+        },
+        {
+          "name": "access to locker"
+        },
+        {
+          "name": "free 2 hours / month in conference room"
+        },
+        {
+          "name": "discount for conferences organized by iTransfer"
+        }
+      ]
+    },
+    {
+      "name": "Team Access for students (all team members must be students",
+      "price": 400,
+      "period": "month",
+      "type": 2,
+      "allowMoreThanOne": true,
+      "facilities": [
+        {
+          "name": "one room with 4-5 offices"
+        },
+        {
+          "name": "5 days / week"
+        },
+        {
+          "name": "one office"
+        },
+        {
+          "name": "free coffee/tea"
+        },
+        {
+          "name": "free wi-fi"
+        },
+        {
+          "name": "free access to the printer"
+        },
+        {
+          "name": "free parking space near the building"
+        },
+        {
+          "name": "access to locker"
+        },
+        {
+          "name": "free 4 hours / month in conference room"
+        },
+        {
+          "name": "discount for conferences organized by iTransfer"
+        }
+      ]
+    }
+  ]
+}

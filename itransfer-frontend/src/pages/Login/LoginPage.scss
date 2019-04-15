@@ -11,7 +11,7 @@
     margin: auto;
     width: 90%;
     max-width: 800px;
-    height: 370px;
+    height: 400px;
     display: flex;
     flex-direction: row;
     .left-side {
@@ -56,6 +56,17 @@
           span {
             margin-left: 10px;
           }
+        }
+        .divider {
+          margin: 15px 0;
+        }
+        a {
+          color: #38a8bc;
+          text-decoration: none;
+          text-align: center;
+        }
+        .register-link {
+          text-align: center;
         }
       }
     }

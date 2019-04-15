@@ -1,0 +1,115 @@
+.register-page {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: #1d1d91;
+  background-image: url("../../assets/background.png");
+  background-repeat: repeat;
+  .container {
+    width: 90%;
+    max-width: 800px;
+    min-height: 400px;
+    background-color: #f2f2f2;
+    margin-top: 100px;
+    border-radius: 3px 3px 0 0;
+    .title {
+      color: #404244;
+      font-weight: normal;
+      font-size: 20px;
+    }
+    .login-link {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+      margin-top: 20px;
+      a {
+        text-decoration: none;
+        color: #38a8bc;
+      }
+    }
+  }
+  .profile-cards {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 20px;
+    .profile-card {
+      width: 40%;
+      height: 50px;
+      border: 1px dashed #ededed;
+      margin: 0 5%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      &:hover {
+        background-color: #f7f4f9;
+      }
+      &.selected {
+        background-color: #6b54b7;
+        border: 1px solid #404244;
+        color: #f2f2f2;
+        &:hover {
+          background-color: #6b54b7;
+        }
+      }
+    }
+  }
+  .subscription-table {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    flex-direction: column;
+    .plan-card {
+      width: 90%;
+      margin: 30px 5%;
+      min-height: 200px;
+      border: 1px dashed #6b54b7;
+      &.selected {
+        border: solid #6b54b7;
+      }
+      .name {
+        width: 100%;
+        height: 30px;
+        text-align: center;
+        color: #f2f2f2;
+        line-height: 30px;
+      }
+      ul {
+        list-style: none;
+        text-align: center;
+        margin: 0;
+        margin-top: 30px;
+        padding: 0;
+        li:nth-child(even) {
+          background-color: #d1b7f7;
+        }
+        li:nth-child(odd) {
+          background-color: #f9f9f9;
+        }
+        li {
+          width: 100%;
+          height: 20px;
+        }
+      }
+    }
+  }
+  .register-form {
+    margin: 20px 0;
+    .register-input {
+      margin: 5px 0;
+    }
+  }
+  .team-members .register-input {
+    margin: 5px 0;
+  }
+  .loading-step {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}
