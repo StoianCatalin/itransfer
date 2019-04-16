@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "serve-dev": "nodemon --inspect=[::]:3002 app.js",
+    "serve-dev": "nodemon -L --inspect=[::]:3002 app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

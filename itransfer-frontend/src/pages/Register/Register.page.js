@@ -19,6 +19,7 @@ import { MuiPickersUtilsProvider, DatePicker } from 'material-ui-pickers';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import PlansService from "../../services/plans.service";
 import DateFnsUtils from '@date-io/date-fns';
+import AuthService from "../../services/auth.service";
 
 function getSteps() {
   return ['Select your profile', 'Choose your subscription plan', 'Complete with your personal data'];
@@ -55,6 +56,7 @@ class RegisterPage extends Component {
     };
 
     this.plansService = new PlansService();
+    this.authService = new AuthService();
   }
 
   handleNext = () => {
@@ -63,11 +65,12 @@ class RegisterPage extends Component {
     }
     if (this.state.activeStep === 2) {
       this.submit();
+    } else {
+      this.setState(state => ({
+        loading: this.state.activeStep === 0,
+        activeStep: state.activeStep + 1,
+      }));
     }
-    this.setState(state => ({
-      loading: this.state.activeStep === 0,
-      activeStep: state.activeStep + 1,
-    }));
   };
 
   handleBack = () => {
@@ -120,9 +123,25 @@ class RegisterPage extends Component {
     return !isInvalid;
   }
 
-  submit() {
+  async submit() {
     if (this.isFormValid) {
-      console.log(this.state.form, this.state.selectedPlan);
+      try {
+        const response = await this.authService.register({
+          full_name: this.state.form.name,
+          ...this.state.form,
+        }, { planId: this.state.selectedPlan, startDate: new Date(this.state.startDate).getTime() });
+        if (response.status === 200) {
+          this.props.login(response.data);
+          this.setState(state => ({
+            loading: this.state.activeStep === 0,
+            activeStep: state.activeStep + 1,
+          }));
+        } else {
+          this.props.openSnackbar(response.data.message);
+        }
+      } catch (e) {
+        this.props.openSnackbar(e.response.data.message);
+      }
     }
   }
 

@@ -80,7 +80,6 @@ class LoginPage extends Component {
         if (!this.isErrorOnEmail && !this.isErrorOnPassword) {
             try {
                 const response = await this.authService.login(this.state.email.value, this.state.password.value);
-                console.log(response);
                 if (response.status === 200) {
                     this.props.login(response.data);
                 }

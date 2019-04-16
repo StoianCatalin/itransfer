@@ -11,4 +11,8 @@ export default class AuthService {
     return axios.post(`${this.baseUrl}/login`, { email, password });
   }
 
+  register(user, plan) {
+    return axios.post(`${this.baseUrl}/register`, { user, plan });
+  }
+
 }

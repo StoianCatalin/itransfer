@@ -3,6 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import axios from 'axios';
+
+const user = sessionStorage.getItem('user');
+if (user) {
+  const parsedUser = JSON.parse(user);
+  const token = parsedUser.token;
+  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+}
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

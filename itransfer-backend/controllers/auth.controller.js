@@ -4,6 +4,7 @@ const md5 = require('md5');
 const UserModel = DatabaseConnection.User;
 const jwtKey = require('../constants/secret-key').jwtKey;
 const jsonwebtoken = require('jsonwebtoken');
+const { UserCommands } = require('../commands/User.commands');
 
 const router = new CoreRouter();
 router.post('/login', async (ctx, next) => {
@@ -36,12 +37,22 @@ router.post('/login', async (ctx, next) => {
   }, jwtKey, { expiresIn: 60 * 60 });
   ctx.response.status = 200;
   ctx.response.body = {
-      token,
-      email: user.email,
-      name: user.name,
-      id: user.id,
-    };
+    token,
+    email: user.email,
+    name: user.name,
+    id: user.id,
+    role: user.role,
+  };
   await next();
+});
+
+router.post('/register', async (ctx, done) => {
+  const { user, plan } = ctx.request.body;
+  const userCommands = new UserCommands();
+  const { body, status } = await userCommands.register(user, plan);
+  ctx.response.status = status;
+  ctx.response.body = body;
+  await done();
 });
 
 module.exports = { router };

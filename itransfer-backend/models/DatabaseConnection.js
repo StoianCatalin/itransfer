@@ -22,6 +22,7 @@ const Member = MemberModel(sequelize, Sequelize);
 
 Plan.hasMany(Facility);
 User.hasMany(Member);
+User.belongsTo(Plan);
 
 module.exports = {
   sequelize,

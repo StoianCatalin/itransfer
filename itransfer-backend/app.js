@@ -10,7 +10,11 @@ const plansController = require('./controllers/plans.controller');
 const fs = require('fs');
 const app = new Koa();
 const port = 3001;
-const forceSyncDb = true;
+const forceSyncDb = false;
+
+setInterval(() => {
+  console.log('running...');
+}, 10000);
 
 sequelize
   .sync({ force: forceSyncDb })

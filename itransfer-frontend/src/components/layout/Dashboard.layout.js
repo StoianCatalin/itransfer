@@ -1,18 +1,11 @@
 import React, { Component } from 'react';
 import './Dashboard.scss';
-import UserAvatar from '../../assets/user.svg';
-import Logo from '../../logo-itransfer.png';
-import { IconButton, Menu, MenuItem, Tabs, Tab } from "@material-ui/core";
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import {Router, withRouter} from "react-router-dom";
-import { history } from '../../reducers/history';
-import PrivateRoute from "../../common/PrivateRoute";
-import HomePage from "../../pages/Home/Home.page";
-import UsersPage from "../../pages/Users/Users.page";
-import SpacesPage from "../../pages/Spaces/Spaces.page";
+import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import UserEditPage from "../../pages/Users/edit/UserEdit.page";
-import ProfilePage from '../../pages/Profile/Profile.page';
+import AdminDashboard from "./AdminDashboard/Dashboard.layout";
+import UserDashboard from "./UserDashboard/Dashboard.layout";
+import UserService from "../../services/user.service";
+import {loginUser, logoutUser} from "../../actions/user";
 
 class DashboardLayout extends Component {
 
@@ -21,102 +14,53 @@ class DashboardLayout extends Component {
     this.state = {
       anchorEl: null,
       currentPage: props.location.pathname
+    };
+    this.userService = new UserService();
+    this.refreshUser();
+  }
+
+  async refreshUser() {
+    try {
+      const response = await this.userService.getMe();
+      this.props.loginUser(response.data);
+    } catch (e) {
+      this.props.logoutUser();
     }
   }
 
-  navigate(path) {
-    this.setState({ anchorEl: null });
-    this.props.history.push(path);
-    this.setState({
-      currentPage: path,
-    })
+  getComponent() {
+    switch (this.props.role) {
+      case 1:
+        return <AdminDashboard />;
+      case 0:
+        return <UserDashboard />;
+      default:
+        return <div>Unknown role</div>;
+    }
   }
 
-  handleClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
-  };
-
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
-
   render() {
-    const { anchorEl } = this.state;
-    const open = Boolean(anchorEl);
-
-    return (
-      <div className="dashboard-layout">
-        <header className="header">
-          <div className="logo-container"><img src={Logo} alt="Logo iTransfer" /></div>
-          <div className="left-side">
-            <div className="name">Hello, <b>Catalin</b></div>
-            <div className="avatar"><img src={UserAvatar} alt="User avatar"/></div>
-            <div>
-              <IconButton
-                className="menu-button"
-                aria-label="More"
-                aria-owns={open ? 'long-menu' : undefined}
-                aria-haspopup="true"
-                onClick={this.handleClick}
-              >
-                <MoreVertIcon />
-              </IconButton>
-              <Menu
-                id="long-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={this.handleClose}
-                PaperProps={{
-                  style: {
-                    maxHeight: 45 * 4.5,
-                    width: 200,
-                  },
-                }}
-              >
-                <MenuItem key="profile" onClick={() => {this.navigate("/profile")}} >
-                  Profile
-                </MenuItem>
-                <MenuItem key="logout" onClick={this.handleClose}>
-                  Logout
-                </MenuItem>
-              </Menu>
-            </div>
-          </div>
-        </header>
-        <div className="content">
-          <Router history={history}>
-            <div>
-              <Tabs
-                className="primary-menu"
-                value={this.state.currentPage}
-                onChange={this.handleChange}
-                indicatorColor="primary"
-                textColor="primary"
-                variant="fullWidth"
-              >
-                <Tab value="/dashboard" label="Dashboard" onClick={() => {this.navigate("/dashboard")}} />
-                <Tab value="/users" label="Users" onClick={() => {this.navigate("/users")}} />
-                <Tab value="/spaces" label="Spaces" onClick={() => {this.navigate("/spaces")}} />
-              </Tabs>
-              <div className="page">
-                <PrivateRoute path="(/|/dashboard)/" component={HomePage}/>
-                <PrivateRoute exact path="/users" component={UsersPage}/>
-                <PrivateRoute path="/users/:id/edit" component={UserEditPage}/>
-                <PrivateRoute path="/spaces" component={SpacesPage}/>
-                <PrivateRoute path="/profile" component={ProfilePage}/>
-              </div>
-            </div>
-          </Router>
-        </div>
-      </div>
-    )
+    return this.getComponent();
   }
 }
 
-const mapStateToProps = state => {
+const mapDispatchToProps = dispatch => {
   return {
+    loginUser: (user) => {
+      dispatch(loginUser(user))
+    },
+    logoutUser: () => {
+      dispatch(logoutUser());
+    }
+  };
+};
 
+
+const mapStateToProps = state => {
+  console.log(state);
+  return {
+    role: state.user.role
   }
 };
 
-export default withRouter(connect(mapStateToProps)(DashboardLayout))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DashboardLayout))
