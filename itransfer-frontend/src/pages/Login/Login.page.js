@@ -33,7 +33,6 @@ class LoginPage extends Component {
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
-        console.log(nextProps);
         this.setState({ ...nextProps });
     }
 
@@ -97,7 +96,7 @@ class LoginPage extends Component {
 
     render() {
         return (
-          <div className="login-page">
+          <div className="login-page" onKeyPress={(event) => { if (event.charCode === 13) this.onSubmit(); }}>
               <Card className="container">
                   <div className="left-side">
                       <img src={computerSVG} alt="computer" />

@@ -101,7 +101,7 @@ class RegisterPage extends Component {
   }
 
   handleDateChange = date => {
-    this.setState({ startDate: date });
+    this.setState({ startDate: new Date(date) });
   };
 
   get hasMoreMembersInTeam() {
@@ -214,9 +214,7 @@ class RegisterPage extends Component {
         validate={true}
         onChange={(name) => {
           const team = this.state.form.team.map(i => i);
-          console.log(team[index], name);
           team[index] = name;
-          console.log(team);
           this.setState({ form: { ...this.state.form, team: [...team]  }});
         }}
         placeholder={`Team member ${index + 1}`}

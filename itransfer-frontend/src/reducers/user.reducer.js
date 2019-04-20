@@ -1,4 +1,4 @@
-import {LOGIN_USER, LOGOUT_USER} from "../actions/actionTypes";
+import {LOGIN_USER, LOGOUT_USER, SET_MEMBERS} from "../actions/actionTypes";
 import axios from 'axios';
 
 let initialState = sessionStorage.getItem('user');
@@ -13,13 +13,16 @@ if (initialState) {
         password: '',
         token: '',
         authenticated: false,
+        members: [],
+        plan: null,
     };
 }
 
 export function userReducer(state = initialState, action) {
+    let newState;
     switch (action.type) {
         case LOGIN_USER:
-            const newState = { ...state, ...action.payload, authenticated: true };
+            newState = { ...state, ...action.payload, authenticated: true };
             sessionStorage.setItem('user', JSON.stringify(newState));
             if (newState.token) {
                 axios.defaults.headers.common['Authorization'] = `Bearer ${newState.token}`;
@@ -34,7 +37,13 @@ export function userReducer(state = initialState, action) {
                 password: '',
                 token: '',
                 authenticated: false,
+                members: [],
+                plan: null,
             };
+        case SET_MEMBERS:
+            newState = { ...state, members: action.payload };
+            sessionStorage.setItem('user', JSON.stringify(newState));
+            return newState;
         default:
             return state;
     }

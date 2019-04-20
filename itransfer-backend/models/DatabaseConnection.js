@@ -3,6 +3,7 @@ const UserModel = require('./User.model');
 const PlanModel = require('./Plan.model');
 const FacilityModel = require('./Facility.model');
 const MemberModel = require('./Member.model');
+const PaymentModel = require('./Payment.model');
 
 const sequelize = new Sequelize('itransfer', 'root', 'root', {
   host: 'itransfer-mysql',
@@ -19,15 +20,19 @@ const User = UserModel(sequelize, Sequelize);
 const Plan = PlanModel(sequelize, Sequelize);
 const Facility = FacilityModel(sequelize, Sequelize);
 const Member = MemberModel(sequelize, Sequelize);
+const Payment = PaymentModel(sequelize, Sequelize);
 
 Plan.hasMany(Facility);
 User.hasMany(Member);
 User.belongsTo(Plan);
+User.hasMany(Payment);
+Payment.belongsTo(Plan);
 
 module.exports = {
   sequelize,
   User,
   Plan,
   Facility,
-  Member
+  Member,
+  Payment,
 };

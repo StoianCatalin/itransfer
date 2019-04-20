@@ -3,11 +3,9 @@ import { Tabs, Tab } from "@material-ui/core";
 import {Router, withRouter} from "react-router-dom";
 import { history } from '../../../reducers/history';
 import PrivateRoute from "../../../common/PrivateRoute";
-import HomePage from "../../../pages/Home/Home.page";
-import UsersPage from "../../../pages/Users/Users.page";
-import SpacesPage from "../../../pages/Spaces/Spaces.page";
+import UserHomePage from "../../../pages/UserHome/UserHome.page";
 import {connect} from "react-redux";
-import UserEditPage from "../../../pages/Users/edit/UserEdit.page";
+import MeetingsPage from '../../../pages/Meetings/Meetings.page';
 import ProfilePage from '../../../pages/Profile/Profile.page';
 import Header from '../../header/Header.component';
 
@@ -29,17 +27,11 @@ class UserDashboardLayout extends Component {
     })
   }
 
-  handleClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
-  };
-
   handleClose = () => {
     this.setState({ anchorEl: null });
   };
 
   render() {
-    const { anchorEl } = this.state;
-    const open = Boolean(anchorEl);
 
     return (
       <div className="dashboard-layout">
@@ -55,15 +47,12 @@ class UserDashboardLayout extends Component {
                 textColor="primary"
                 variant="fullWidth"
               >
-                <Tab value="/dashboard" label="Dashboard" onClick={() => {this.navigate("/dashboard")}} />
-                <Tab value="/users" label="Users" onClick={() => {this.navigate("/users")}} />
-                <Tab value="/spaces" label="Spaces" onClick={() => {this.navigate("/spaces")}} />
+                <Tab value="/dashboard" label="Home" onClick={() => {this.navigate("/dashboard")}} />
+                <Tab value="/meetings" label="Meetings" onClick={() => {this.navigate("/meetings")}} />
               </Tabs>
               <div className="page">
-                <PrivateRoute path="(/|/dashboard)/" component={HomePage}/>
-                <PrivateRoute exact path="/users" component={UsersPage}/>
-                <PrivateRoute path="/users/:id/edit" component={UserEditPage}/>
-                <PrivateRoute path="/spaces" component={SpacesPage}/>
+                <PrivateRoute path="(/|/dashboard)/" component={UserHomePage}/>
+                <PrivateRoute path="/meetings" component={MeetingsPage}/>
                 <PrivateRoute path="/profile" component={ProfilePage}/>
               </div>
             </div>

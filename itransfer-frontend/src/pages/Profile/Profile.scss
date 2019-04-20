@@ -1,11 +1,32 @@
 .profile-container {
   padding: 20px;
-  form {
+  .profile-form {
     display: flex;
     flex-direction: column;
+    margin: 20px auto;
+    width: 70%;
   }
   .profile-button {
     width: 200px;
     margin-top: 20px;
+  }
+  input[type=text], input[type=password] {
+    background-color: transparent;
+  }
+  .profile-form input.profile-input {
+    margin: 10px 0;
+  }
+  .input-wrapper {
+    width: 45%;
+  }
+  .profile-form .two-columns {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    input.profile-input {
+      height: 54px;
+      width: 100%;
+      padding: 0 10px;
+    }
   }
 }

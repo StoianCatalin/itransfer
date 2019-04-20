@@ -1,5 +1,8 @@
 export const CREATE_USER = 'CREATE_USER';
 export const LOGIN_USER = 'LOGIN_USER';
 export const LOGOUT_USER = 'LOGOUT_USER';
+export const UPDATE_MEMBERS = 'UPDATE_MEMBERS';
+export const SET_MEMBERS = 'SET_MEMBERS';
+export const FETCH_PAYMENTS = 'FETCH_PAYMENTS';
 export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
 export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';

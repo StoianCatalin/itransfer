@@ -11,4 +11,13 @@ router.get('/me', isAuthenticated, async (ctx, next) => {
   await next();
 });
 
+router.post('/members', isAuthenticated, async (ctx, next) => {
+  const members = ctx.request.body;
+  const userCommands = new UserCommands();
+  await userCommands.updateMembers(members);
+  ctx.response.status = 200;
+  ctx.response.body = members;
+  await next();
+});
+
 module.exports = { router };

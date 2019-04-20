@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import './Profile.scss';
-import TextField from '@material-ui/core/TextField';
-import {Button, Icon} from "@material-ui/core";
+import {Button, Divider, Icon} from "@material-ui/core";
+import { Textbox } from 'react-inputs-validation';
 
 class ProfilePage extends Component {
 
@@ -11,11 +11,24 @@ class ProfilePage extends Component {
     super(props);
     this.state = {
       open: false,
-      name: '',
-      password: '',
-      repeatPassword: '',
-      email: '',
-      role: ''
+      form: {
+        name: '',
+        password: '',
+        email: '',
+      },
+      formValidation: {
+        name: true,
+        password: true,
+        confirmPassword: true,
+        email: true,
+      },
+      teamMembers: {
+        member1: { name: '', email: '' },
+        member2: { name: '', email: '' },
+        member3: { name: '', email: '' },
+        member4: { name: '', email: '' },
+        member5: { name: '', email: '' },
+      }
     };
   }
 
@@ -26,42 +39,124 @@ class ProfilePage extends Component {
   render() {
     return (
       <div className="profile-container">
-        <form autoComplete="off">
-          <TextField
-            id="standard-name"
-            label="Name"
-            value={this.state.name}
-            onChange={this.handleChange('name')}
-            margin="normal"
+        <h2>My profile</h2>
+        <Divider />
+        <div className="profile-form">
+          <Textbox
+            classNameInputs="profile-input"
+            id={'name'}
+            name={'Full name'}
+            type="text"
+            value={this.state.form.name}
+            validate={true}
+            onChange={(name) => { this.setState({ form: { ...this.state.form, name } }); }}
+            placeholder="Full name"
+            validationCallback={name => { this.setState({ formValidation: { ...this.state.formValidation, name } }) } }
+            onBlur={() => {}}
+            validationOption={{
+              name: 'Full name',
+              check: true,
+              required: true
+            }}
           />
-          <TextField
-            id="standard-name"
-            label="Password"
+          <Textbox
+            classNameInput="profile-input"
+            id={'password'}
+            name={'password'}
             type="password"
-            value={this.state.password}
-            onChange={this.handleChange('password')}
-            margin="normal"
+            value={this.state.form.password}
+            validate={true}
+            onChange={(password) => { this.setState({ form: { ...this.state.form, password } }); }}
+            placeholder="Password"
+            validationCallback={password => { this.setState({ formValidation: { ...this.state.formValidation, password } }) } }
+            onBlur={() => {}}
+            validationOption={{
+              name: 'Password',
+              check: true,
+              required: true,
+              min: 6
+            }}
           />
-          <TextField
-            id="standard-name"
-            label="Confirm password"
-            type="password"
-            value={this.state.repeatPassword}
-            onChange={this.handleChange('repeatPassword')}
-            margin="normal"
+          <Textbox
+            classNameInput="profile-input"
+            id={'email'}
+            name={'email'}
+            type="text"
+            value={this.state.form.email}
+            validate={true}
+            onChange={(email) => { this.setState({ form: { ...this.state.form, email } }); }}
+            placeholder="Email"
+            validationCallback={email => { this.setState({ formValidation: { ...this.state.formValidation, email } }) } }
+            onBlur={() => {}}
+            validationOption={{
+              name: 'Email',
+              check: true,
+              required: true,
+              customFunc: email => {
+                const reg = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                if (reg.test(String(email).toLowerCase())) {
+                  return true;
+                } else {
+                  return 'Is not a valid email address';
+                }
+              }
+            }}
           />
-          <TextField
-            id="standard-name"
-            label="Email"
-            type="email"
-            value={this.state.email}
-            onChange={this.handleChange('email')}
-            margin="normal"
-          />
+          <h4>Team members</h4>
+          <div className="two-columns">
+            <Textbox
+              classNameInput="profile-input"
+              classNameWrapper="input-wrapper"
+              id={'member1-name'}
+              name={'member1-name'}
+              type="text"
+              value={this.state.teamMembers.member1.name}
+              validate={true}
+              onChange={(name) => { this.setState({ teamMembers: {
+                  ...this.state.teamMembers, member1: { ...this.state.teamMembers.member1, name }
+                } }); }}
+              placeholder="Member full name"
+              validationCallback={() => {}}
+              onBlur={() => {}}
+              validationOption={{
+                name: 'Member name',
+                check: true,
+                required: true,
+              }}
+            />
+            <Textbox
+              classNameInput="profile-input"
+              classNameWrapper="input-wrapper"
+              id={'member1-email'}
+              name={'member1-email'}
+              type="text"
+              value={this.state.teamMembers.member1.email}
+              validate={true}
+              onChange={(email) => { this.setState({ teamMembers: {
+                  ...this.state.teamMembers, member1: { ...this.state.teamMembers.member1, email }
+                } }); }}
+              placeholder="Member full email"
+              validationCallback={() => {}}
+              onBlur={() => {}}
+              validationOption={{
+                name: 'Member email',
+                check: true,
+                required: true,
+                customFunc: email => {
+                  const reg = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                  if (reg.test(String(email).toLowerCase())) {
+                    return true;
+                  } else {
+                    return 'Is not a valid email address';
+                  }
+                }
+              }}
+            />
+          </div>
           <Button variant="contained" color="primary" className="profile-button" onClick={() => this.onSubmit()}>
             Save
           </Button>
-        </form>
+        </div>
       </div>
     )
   }

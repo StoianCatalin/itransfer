@@ -11,4 +11,8 @@ export default class UserService {
     return axios.get(`${this.baseUrl}/me`);
   }
 
+  updateMembers(members) {
+    return axios.post(`${this.baseUrl}/members`, members);
+  }
+
 }

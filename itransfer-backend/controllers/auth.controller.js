@@ -4,6 +4,7 @@ const md5 = require('md5');
 const UserModel = DatabaseConnection.User;
 const jwtKey = require('../constants/secret-key').jwtKey;
 const jsonwebtoken = require('jsonwebtoken');
+const {Member, Plan} = require('../models/DatabaseConnection');
 const { UserCommands } = require('../commands/User.commands');
 
 const router = new CoreRouter();
@@ -30,16 +31,26 @@ router.post('/login', async (ctx, next) => {
     ctx.response.body = { message: 'Email or password are wrong' };
     return;
   }
+  const members = await Member.findAll({
+    where: { userId: user.id },
+    raw: true,
+  });
+  const plan = await Plan.findOne({
+    where: { id: user.planId },
+    raw: true
+  });
   const token = jsonwebtoken.sign({
     email: user.email,
-    name: user.name,
+    full_name: user.full_name,
     id: user.id,
   }, jwtKey, { expiresIn: 60 * 60 });
   ctx.response.status = 200;
   ctx.response.body = {
     token,
+    members,
+    plan,
     email: user.email,
-    name: user.name,
+    full_name: user.full_name,
     id: user.id,
     role: user.role,
   };

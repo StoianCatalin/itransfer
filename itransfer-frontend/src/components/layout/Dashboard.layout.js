@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import './Dashboard.scss';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import AdminDashboard from "./AdminDashboard/Dashboard.layout";
-import UserDashboard from "./UserDashboard/Dashboard.layout";
+import AdminDashboard from "./AdminDashboard/AdminDashboard.layout";
+import UserDashboard from "./UserDashboard/UserDashboard.layout";
 import UserService from "../../services/user.service";
 import {loginUser, logoutUser} from "../../actions/user";
 
@@ -57,7 +57,6 @@ const mapDispatchToProps = dispatch => {
 
 
 const mapStateToProps = state => {
-  console.log(state);
   return {
     role: state.user.role
   }
