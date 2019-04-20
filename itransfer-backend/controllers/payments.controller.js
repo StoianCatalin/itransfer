@@ -12,4 +12,25 @@ router.get('/all', isAuthenticated,async (ctx, next) => {
   await next();
 });
 
+router.post('/upload/:paymentId', isAuthenticated, async (ctx, next) => {
+  const paymentId = ctx.params.paymentId;
+  const file = ctx.request.files.filepond;
+  if (!file.type.startsWith('image/')) {
+    ctx.response.status = 409;
+    return;
+  }
+  const paymentCommands = new PaymentCommands();
+  const response = await paymentCommands.uploadFileAndCompletePayment(paymentId, ctx.state.user.id, file);
+  ctx.response.status = response.status;
+  await next();
+});
+
+router.delete('/upload/:paymentId', isAuthenticated, async (ctx, next) => {
+  const paymentId = ctx.params.paymentId;
+  const paymentCommands = new PaymentCommands();
+  const response = await paymentCommands.deleteFileAndUncompletePayment(paymentId, ctx.state.user.id);
+  ctx.response.status = response.status;
+  await next();
+});
+
 module.exports = { router };

@@ -12,12 +12,27 @@ import {connect} from "react-redux";
 import {Textbox} from "react-inputs-validation";
 import {updateMembers} from "../../actions/user";
 import {fetchPayments} from "../../actions/payment";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Radio from '@material-ui/core/Radio';
+import { FilePond, registerPlugin } from 'react-filepond';
+import 'filepond/dist/filepond.min.css';
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 
+registerPlugin(FilePondPluginFileValidateType);
 
 class UserHomePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      paymentInfo: {
+        method: 1,
+      },
+      paymentModalOpen: false,
+      paymentSelected: {},
       user: props.user,
       members: props.members,
       plan: props.user.plan,
@@ -32,12 +47,62 @@ class UserHomePage extends Component {
 
   handleUpdateMembersEmail() {
     for (const member of this.state.members) {
-      console.log(member);
       if (member.email && member.invalid) {
         return;
       }
     }
     this.props.updateMembers(this.state.members)
+  }
+
+  handleClosePaymentModal = () => {
+    this.props.fetchPayments();
+    this.setState({
+      paymentModalOpen: false,
+      paymentSelected: {},
+    });
+  };
+
+  openPaymentModal = (payment) => {
+    this.setState({
+      paymentModalOpen: true,
+      paymentSelected: payment,
+    });
+  };
+
+  handleChangePayMethod = (method) => {
+    this.setState({
+      paymentInfo: { method }
+    });
+  };
+
+  receiptMethodRender() {
+    return (
+      <div className="method-container">
+        <FilePond
+          acceptedFileTypes={['image/*']}
+          server={
+          {
+            url: `http://localhost:3001/payments/upload/${this.state.paymentSelected.id}`,
+            process: {
+              headers: {
+                'authorization': `Bearer ${this.state.user.token}`
+              }
+            },
+            revert: {
+              headers: {
+                'authorization': `Bearer ${this.state.user.token}`
+              }
+            },
+          }
+        }/>
+      </div>
+    );
+  }
+
+  creditCardMethodRender() {
+    return (
+      <div className="method-container">credit card method</div>
+    );
   }
 
   render() {
@@ -113,7 +178,7 @@ class UserHomePage extends Component {
             <TableRow>
               <TableCell>Subscription plan</TableCell>
               <TableCell>Status</TableCell>
-              <TableCell>Payment date</TableCell>
+              <TableCell>Date</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -127,7 +192,7 @@ class UserHomePage extends Component {
                   <TableCell><span className={"status " + payment.status}>{ payment.status }</span></TableCell>
                   <TableCell>{ new Date(payment.startDate).toLocaleString('en-us', { day: '2-digit', month: 'long', year: 'numeric' }) }</TableCell>
                   <TableCell>
-                    <Button variant="contained" color="primary" disabled={payment.status !== 'unpaid'}>
+                    <Button variant="contained" color="primary" disabled={payment.status !== 'unpaid'} onClick={() => { this.openPaymentModal(payment); }}>
                       Pay
                     </Button>
                   </TableCell>
@@ -136,6 +201,33 @@ class UserHomePage extends Component {
             }) }
           </TableBody>
         </Table>
+        <Dialog
+          open={this.state.paymentModalOpen}
+          onClose={this.handleClosePaymentModal}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogTitle id="form-dialog-title">Payment</DialogTitle>
+          <DialogContent>
+            <div className="choose-method" onClick={() => { this.handleChangePayMethod(1) }}>
+              <Radio checked={this.state.paymentInfo.method === 1} value="1" />
+              Upload bank receipt
+            </div>
+            <div className="choose-method" onClick={() => { this.handleChangePayMethod(2) }}>
+              <Radio checked={this.state.paymentInfo.method === 2} value="2" />
+              Credit card
+            </div>
+            <DialogContentText>
+              If you choose to pay via bank receipt, your submission must be checked by our team. Also meke sure you upload a readable photo/scan.
+            </DialogContentText>
+            { this.state.paymentInfo.method === 1 && this.receiptMethodRender() }
+            { this.state.paymentInfo.method === 2 && this.creditCardMethodRender() }
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClosePaymentModal} color="primary">
+              Done
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     )
   }
@@ -153,7 +245,6 @@ const mapDispatchToProps = dispatch => {
 };
 
 const mapStateToProps = state => {
-  console.log(state);
   return {
     user: { ...state.user, members: null },
     members: state.user.members,

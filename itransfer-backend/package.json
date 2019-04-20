@@ -13,6 +13,7 @@
     "jsonwebtoken": "^8.5.1",
     "kcors": "^2.2.2",
     "koa": "^2.7.0",
+    "koa-body": "^4.1.0",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
     "md5": "^2.2.1",
