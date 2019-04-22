@@ -14,6 +14,8 @@
     "material-ui-pickers": "^2.2.4",
     "node-sass": "^4.11.0",
     "react": "^16.7.0",
+    "react-credit-card-primitives": "^1.5.1",
+    "react-credit-cards": "^0.7.0",
     "react-dom": "^16.7.0",
     "react-filepond": "^7.0.1",
     "react-inputs-validation": "^2.2.0",

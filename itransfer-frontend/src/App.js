@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Router, Switch } from "react-router-dom";
+import 'react-credit-cards/es/styles-compiled.css';
 import './App.scss';
 import LoginPage from './pages/Login/Login.page';
 import RegisterPage from './pages/Register/Register.page';

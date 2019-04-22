@@ -1,7 +1,6 @@
 const Koa = require('koa');
 const http = require('http');
 const bodyParser = require('koa-bodyparser');
-const koaBody = require("koa-body");
 const cors = require('kcors');
 const { sequelize, Plan, Facility } = require('./models/DatabaseConnection');
 const statusController = require('./controllers/status.controller');
@@ -42,7 +41,6 @@ sequelize
 
 
 app.use(bodyParser());
-app.use(koaBody({ multipart: true }));
 app.use(cors());
 
 app.use(authController.router.prefix('/auth').routes());

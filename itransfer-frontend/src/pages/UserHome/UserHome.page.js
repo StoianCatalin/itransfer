@@ -21,6 +21,8 @@ import Radio from '@material-ui/core/Radio';
 import { FilePond, registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+import Cards from 'react-credit-cards';
+import {Number, Cvc, Expiration} from 'react-credit-card-primitives'
 
 registerPlugin(FilePondPluginFileValidateType);
 
@@ -28,6 +30,19 @@ class UserHomePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      card: {
+        number: '',
+        name: '',
+        expiry: '',
+        cvc: '',
+        focused: '',
+      },
+      cardValid: {
+        number: false,
+        name: false,
+        expiry: false,
+        cvc: false,
+      },
       paymentInfo: {
         method: 1,
       },
@@ -99,9 +114,72 @@ class UserHomePage extends Component {
     );
   }
 
+  setFocusedField(fieldName) {
+    console.log(fieldName);
+    this.setState({ card: { ...this.state.card, focused: fieldName } });
+  }
+
   creditCardMethodRender() {
     return (
-      <div className="method-container">credit card method</div>
+      <div className="method-container">
+        <Cards
+          number={this.state.card.number}
+          name={this.state.card.name}
+          expiry={this.state.card.expiry}
+          cvc={this.state.card.cvc}
+          focused={this.state.card.focused}
+        />
+        <Number
+          onChange={({value, valid}) => {
+            this.setState({ card: {...this.state.card, number: value || '' }, cardValid: { ...this.state.cardValid, number: valid } }) }}
+          render={({
+                     getInputProps,
+                     valid
+                   }) => <input {...getInputProps()} className={"card-input" + (valid ? '' : ' error')} onFocus={() => { this.setFocusedField('number') }} />} />
+        <Textbox
+          id={'owner-name'}
+          name={'owner-name'}
+          type="text"
+          onFocus={() => { this.setFocusedField('name') }}
+          value={this.state.card.name}
+          validate={true}
+          onChange={(name) => {  this.setState({ card: {...this.state.card, name: name || '' } }) }}
+          placeholder="Member full name"
+          validationCallback={(invalid) => { this.setState({ cardValid: {...this.state.cardValid, name: !invalid } }) }}
+          onBlur={() => {}}
+          validationOption={{
+            name: 'Name',
+            check: true,
+            required: true,
+          }}
+        />
+        <Expiration
+          onChange={({ rawValue, valid }) => {
+            this.setState({ card: { ...this.state.card, expiry: rawValue.replace(/ /g,''), cardValid: { ...this.state.cardValid, expiry: valid } } });
+          }}
+          render={({
+                     getInputProps,
+                     valid,
+                     error
+                   }) => (
+            <div>
+              <input onFocus={() => { this.setFocusedField('expiry') }} {...getInputProps()} className={"card-input" + (valid ? '' : ' error')} />
+              {!this.state.card.expiry ? ''
+                  : error === Expiration.ERROR_MONTH ? 'Please enter valid month'
+                    : error === Expiration.ERROR_YEAR ? 'Please enter valid year'
+                      : error === Expiration.ERROR_PAST_DATE ? 'Please enter a date in the future.'
+                        : ''}
+            </div>
+          )} />
+        <Cvc
+          onChange={({value, valid}) => {
+            this.setState({ card: { ...this.state.card, cvc: value, cardValid: { ...this.state.cardValid, cvc: valid } } });
+          }}
+          render={({
+                     getInputProps,
+                     valid
+                   }) => <input {...getInputProps()} className={"card-input" + (valid ? '' : ' error')} onFocus={() => { this.setFocusedField('cvc') }} />} />
+      </div>
     );
   }
 
@@ -223,9 +301,21 @@ class UserHomePage extends Component {
             { this.state.paymentInfo.method === 2 && this.creditCardMethodRender() }
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.handleClosePaymentModal} color="primary">
-              Done
-            </Button>
+            { this.state.paymentInfo.method === 1 && (
+              <Button onClick={this.handleClosePaymentModal} color="primary">
+                Done
+              </Button>
+            ) }
+            { this.state.paymentInfo.method === 2 && (
+              [
+                <Button variant="contained" color="primary">
+                  Pay
+                </Button>,
+                <Button onClick={this.handleClosePaymentModal} color="primary">
+                Cancel
+                </Button>
+              ]
+            ) }
           </DialogActions>
         </Dialog>
       </div>

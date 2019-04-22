@@ -1,4 +1,5 @@
 const { PaymentCommands } = require('../commands/Payment.commands');
+const koaBody = require("koa-body");
 
 const CoreRouter = require('koa-router');
 const isAuthenticated = require('../middlewares/authentication.middleware').isAuthenticated;
@@ -12,7 +13,7 @@ router.get('/all', isAuthenticated,async (ctx, next) => {
   await next();
 });
 
-router.post('/upload/:paymentId', isAuthenticated, async (ctx, next) => {
+router.post('/upload/:paymentId', isAuthenticated, koaBody({ multipart: true }), async (ctx, next) => {
   const paymentId = ctx.params.paymentId;
   const file = ctx.request.files.filepond;
   if (!file.type.startsWith('image/')) {
