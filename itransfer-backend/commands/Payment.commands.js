@@ -79,6 +79,22 @@ class PaymentCommands {
       status: 200
     }
   }
+
+  async payWithCard(paymentId, userId) {
+    const payment = await Payment.findOne({
+      where: { id: paymentId }
+    });
+    if (payment.userId !== userId) {
+      return {
+        status: 401,
+      }
+    }
+    payment.payedDate = new Date().getTime();
+    payment.status = 'payed';
+    payment.recipeUrl = this.generateRandomName(20);
+    await payment.save();
+    return { status: 200 };
+  }
 }
 
 module.exports = { PaymentCommands };

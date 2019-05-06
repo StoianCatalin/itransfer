@@ -11,4 +11,8 @@ export default class PaymentService {
     return axios.get(`${this.baseUrl}/all`);
   }
 
+  payWithCreditCard(paymentId, card) {
+    return axios.post(`${this.baseUrl}/card/${paymentId}`, { card });
+  }
+
 }

@@ -34,4 +34,12 @@ router.delete('/upload/:paymentId', isAuthenticated, async (ctx, next) => {
   await next();
 });
 
+router.post('/card/:paymentId', isAuthenticated, async (ctx, next) => {
+  const paymentId = ctx.params.paymentId;
+  const paymentCommands = new PaymentCommands();
+  const response = await await paymentCommands.payWithCard(paymentId, ctx.state.user.id);
+  ctx.response.status = response.status;
+  await next();
+});
+
 module.exports = { router };

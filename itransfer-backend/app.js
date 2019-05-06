@@ -8,6 +8,7 @@ const authController = require('./controllers/auth.controller');
 const usersController = require('./controllers/users.controller');
 const plansController = require('./controllers/plans.controller');
 const paymentsController = require('./controllers/payments.controller');
+const PaymentJob = require('./jobs/payment.job');
 const fs = require('fs');
 const app = new Koa();
 const port = 3001;
@@ -48,6 +49,8 @@ app.use(usersController.router.prefix('/users').routes());
 app.use(plansController.router.prefix('/plans').routes());
 app.use(paymentsController.router.prefix('/payments').routes());
 app.use(statusController.router.routes());
+
+PaymentJob.run();
 
 const server = http.createServer(app.callback());
 server.listen(port);

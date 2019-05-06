@@ -23,6 +23,7 @@ import 'filepond/dist/filepond.min.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import Cards from 'react-credit-cards';
 import {Number, Cvc, Expiration} from 'react-credit-card-primitives'
+import PaymentService from "../../services/payment.service";
 
 registerPlugin(FilePondPluginFileValidateType);
 
@@ -53,6 +54,7 @@ class UserHomePage extends Component {
       plan: props.user.plan,
     };
     this.props.fetchPayments();
+    this.paymentService = new PaymentService();
 
   }
 
@@ -90,6 +92,17 @@ class UserHomePage extends Component {
     });
   };
 
+  submitCardPayment() {
+    const { number, name, expiry, cvc } = this.state.card;
+    if (number && name && expiry && cvc) {
+      this.paymentService.payWithCreditCard(this.state.paymentSelected.id).then((response) => {
+        this.setState({
+          paymentModalOpen: false,
+        });
+      });
+    }
+  }
+
   receiptMethodRender() {
     return (
       <div className="method-container">
@@ -115,7 +128,6 @@ class UserHomePage extends Component {
   }
 
   setFocusedField(fieldName) {
-    console.log(fieldName);
     this.setState({ card: { ...this.state.card, focused: fieldName } });
   }
 
@@ -184,6 +196,7 @@ class UserHomePage extends Component {
   }
 
   render() {
+    const { number, name, expiry, cvc } = this.state.card;
     return (
       <div className="container user-home">
         <h2 className="header">Dashboard</h2>
@@ -308,7 +321,7 @@ class UserHomePage extends Component {
             ) }
             { this.state.paymentInfo.method === 2 && (
               [
-                <Button variant="contained" color="primary">
+                <Button variant="contained" color="primary" disabled={!(number && name && expiry && cvc)} onClick={() => { this.submitCardPayment() }}>
                   Pay
                 </Button>,
                 <Button onClick={this.handleClosePaymentModal} color="primary">
