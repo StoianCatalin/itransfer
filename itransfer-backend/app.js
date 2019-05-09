@@ -2,12 +2,13 @@ const Koa = require('koa');
 const http = require('http');
 const bodyParser = require('koa-bodyparser');
 const cors = require('kcors');
-const { sequelize, Plan, Facility } = require('./models/DatabaseConnection');
+const { sequelize, Plan, Facility, Room } = require('./models/DatabaseConnection');
 const statusController = require('./controllers/status.controller');
 const authController = require('./controllers/auth.controller');
 const usersController = require('./controllers/users.controller');
 const plansController = require('./controllers/plans.controller');
 const paymentsController = require('./controllers/payments.controller');
+const eventsController = require('./controllers/events.controller');
 const PaymentJob = require('./jobs/payment.job');
 const fs = require('fs');
 const app = new Koa();
@@ -25,7 +26,7 @@ sequelize
 
     // TODO: to be removed at the end;
     if (forceSyncDb) {
-      const rawdata = fs.readFileSync('./resources/plans.json');
+      let rawdata = fs.readFileSync('./resources/plans.json');
       const plans = JSON.parse(rawdata).plans;
       for (const plan of plans) {
         const p = await Plan.build(plan).save();
@@ -34,6 +35,9 @@ sequelize
         }
         await Facility.bulkCreate(plan.facilities);
       }
+      rawdata = fs.readFileSync('./resources/rooms.json');
+      const rooms = JSON.parse(rawdata).rooms;
+      await Room.bulkCreate(rooms);
     }
   })
   .catch(err => {
@@ -48,6 +52,7 @@ app.use(authController.router.prefix('/auth').routes());
 app.use(usersController.router.prefix('/users').routes());
 app.use(plansController.router.prefix('/plans').routes());
 app.use(paymentsController.router.prefix('/payments').routes());
+app.use(eventsController.router.prefix('/events').routes());
 app.use(statusController.router.routes());
 
 PaymentJob.run();

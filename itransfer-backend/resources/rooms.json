@@ -1,0 +1,25 @@
+{
+  "rooms": [
+    {
+      "name": "Room1"
+    },
+    {
+      "name": "Room2"
+    },
+    {
+      "name": "Room3"
+    },
+    {
+      "name": "Room4"
+    },
+    {
+      "name": "Room5"
+    },
+    {
+      "name": "Room6"
+    },
+    {
+      "name": "Room7"
+    }
+  ]
+}
