@@ -1,155 +1,252 @@
 import React, { Component } from 'react';
 import './Home.scss'
 import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-  RadialBarChart, RadialBar, Legend
-} from 'recharts';
-import GroupWorkIcon from '@material-ui/icons/GroupWork'
-import GroupAddIcon from '@material-ui/icons/GroupAdd'
-import EventIcon from '@material-ui/icons/Event'
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import {Textbox} from "react-inputs-validation";
+
 
 
 export default class HomePage extends Component {
   constructor(props) {
     super(props);
 
-    this.joinedUsers = [
-      {
-        name: '7 Feb', users: 23, pv: 2400, amt: 2400,
+    this.state = {
+      openEditUserDialog: false,
+      openDeleteUserDialog: false,
+      form: {
+        name: '',
+        cnp: '',
+        identity_number: '',
+        address: '',
+        email: '',
+        password: '',
+        team: [],
       },
-      {
-        name: '14 Feb', users: 43, pv: 1398, amt: 2210,
+      formValidation: {
+        name: true,
+        cnp: true,
+        identity_number: true,
+        address: true,
+        email: true,
+        password: true,
       },
-      {
-        name: '21 Feb', users: 12, pv: 9800, amt: 2290,
-      },
-      {
-        name: '28 Feb', users: 78, pv: 3908, amt: 2000,
-      },
-    ];
-    this.spaces = [
-      {
-        subject: 'Space 1', A: 120, B: 110, fullMark: 150,
-      },
-      {
-        subject: 'Space 2', A: 98, B: 130, fullMark: 150,
-      },
-      {
-        subject: 'Space 3', A: 86, B: 130, fullMark: 150,
-      },
-      {
-        subject: 'Space 4', A: 99, B: 100, fullMark: 150,
-      },
-      {
-        subject: 'Space 5', A: 85, B: 90, fullMark: 150,
-      },
-    ];
-    this.rentedSpaces = [
-      {
-        name: 'Space 1', uv: 31.47, pv: 2400, fill: '#8884d8',
-      },
-      {
-        name: 'Space 2', uv: 26.69, pv: 4567, fill: '#83a6ed',
-      },
-      {
-        name: 'Space 3', uv: 15.69, pv: 1398, fill: '#8dd1e1',
-      },
-      {
-        name: 'Space 4', uv: 8.22, pv: 9800, fill: '#82ca9d',
-      },
-      {
-        name: 'Space 5', uv: 8.63, pv: 3908, fill: '#a4de6c',
-      },
-    ];
+    }
+  }
+
+  handleCloseEditUserDialog = () => {
+    this.setState({
+      openEditUserDialog: false,
+    });
+  };
+
+  handleOpenEditUserDialog = () => {
+    this.setState({
+      openEditUserDialog: true,
+    });
+  };
+
+  handleCloseDeleteUserDialog = () => {
+    this.setState({
+      openDeleteUserDialog: false,
+    });
+  };
+
+  handleOpenDeleteUserDialog = () => {
+    this.setState({
+      openDeleteUserDialog: true,
+    });
+  };
+
+  getFormStep() {
+    return (
+      <div className="edit-user-form">
+        <Textbox
+          id={'name'}
+          name={'name'}
+          type="text"
+          value={this.state.form.name}
+          validate={true}
+          onChange={(name) => { this.setState({ form: { ...this.state.form, name } }); }}
+          placeholder="Your full name"
+          validationCallback={name => { this.setState({ formValidation: { ...this.state.formValidation, name } }) } }
+          onBlur={() => {}}
+          validationOption={{
+            name: 'Full name',
+            check: true,
+            required: true
+          }}
+          classNameInput="user-edit-input"
+        />
+        <Textbox
+          classNameInput="user-edit-input"
+          id={'cnp'}
+          name={'cnp'}
+          type="number"
+          value={this.state.form.cnp}
+          validate={true}
+          onChange={(cnp) => { this.setState({ form: { ...this.state.form, cnp } }); }}
+          placeholder="Your ID"
+          validationCallback={cnp => { this.setState({ formValidation: { ...this.state.formValidation, cnp } }) } }
+          onBlur={() => {}}
+          validationOption={{
+            name: 'ID',
+            check: true,
+            required: true,
+            reg: /^([0-9]){13}$/
+          }}
+        />
+        <Textbox
+          classNameInput="user-edit-input"
+          id={'identity_number'}
+          name={'identity_number'}
+          type="text"
+          value={this.state.form.identity_number}
+          validate={true}
+          onChange={(identity_number) => { this.setState({ form: { ...this.state.form, identity_number } }); }}
+          placeholder="Your identity card number"
+          validationCallback={identity_number => { this.setState({ formValidation: { ...this.state.formValidation, identity_number } }) } }
+          onBlur={() => {}}
+          validationOption={{
+            name: 'Identity card number',
+            check: true,
+            required: true,
+            reg: /^([A-Z]{2})([0-9]){6}$/
+          }}
+        />
+        <Textbox
+          classNameInput="user-edit-input"
+          id={'address'}
+          name={'address'}
+          type="text"
+          value={this.state.form.address}
+          validate={true}
+          onChange={(address) => { this.setState({ form: { ...this.state.form, address } }); }}
+          placeholder="Address"
+          validationCallback={address => { this.setState({ formValidation: { ...this.state.formValidation, address } }) } }
+          onBlur={() => {}}
+          validationOption={{
+            name: 'Address',
+            check: true,
+            required: true,
+          }}
+        />
+        <Textbox
+          classNameInput="user-edit-input"
+          id={'email'}
+          name={'email'}
+          type="text"
+          value={this.state.form.email}
+          validate={true}
+          onChange={(email) => { this.setState({ form: { ...this.state.form, email } }); }}
+          placeholder="Email"
+          validationCallback={email => { this.setState({ formValidation: { ...this.state.formValidation, email } }) } }
+          onBlur={() => {}}
+          validationOption={{
+            name: 'Email',
+            check: true,
+            required: true,
+            customFunc: email => {
+              const reg = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+              if (reg.test(String(email).toLowerCase())) {
+                return true;
+              } else {
+                return 'Is not a valid email address';
+              }
+            }
+          }}
+        />
+        <Textbox
+          classNameInput="user-edit-input"
+          id={'password'}
+          name={'password'}
+          type="password"
+          value={this.state.form.password}
+          validate={true}
+          onChange={(password) => { this.setState({ form: { ...this.state.form, password } }); }}
+          placeholder="Password"
+          validationCallback={password => { this.setState({ formValidation: { ...this.state.formValidation, password } }) } }
+          onBlur={() => {}}
+          validationOption={{
+            name: 'Password',
+            check: true,
+            required: true,
+            min: 6
+          }}
+        />
+        { this.hasMoreMembersInTeam && <div className="team-members">
+          <h4>Team Members</h4>
+          { this.generateTeamMembersFields() }
+        </div> }
+      </div>
+    );
   }
 
   render() {
-    const style = {
-      top: 0,
-      right: -50,
-      lineHeight: '24px',
-    };
 
     return (
       <div className="container">
         <h2 className="header">Dashboard</h2>
         <div className="grid three">
-          <Card className="dashboard-card">
+          <Card>
             <CardContent>
-              <h2>Joined users</h2>
-              <ResponsiveContainer width='100%' height={300}>
-                <AreaChart
-                  className="users-chart"
-                  data={this.joinedUsers}
-                  margin={{
-                    top: 10, right: 30, left: 0, bottom: 0,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Area type="monotone" dataKey="users" stroke="#8884d8" fill="#8884d8" />
-                </AreaChart>
-              </ResponsiveContainer>
+              <Typography variant="h5" component="h2">
+                Catalin Stoian
+              </Typography>
+              <Typography component="p">
+                Office: 2 <br />
+                Team Members: 3 <br />
+                Subscription plan: Team Access (450 euro) <br />
+                Status: Active
+              </Typography>
             </CardContent>
-          </Card>
-          <Card className="dashboard-card">
-            <CardContent>
-              <h2>Rented spaces</h2>
-              <ResponsiveContainer width='100%' height={300}>
-                <RadialBarChart barSize={10} data={this.rentedSpaces}>
-                  <RadialBar minAngle={15} label={{ position: 'insideStart', fill: '#fff' }} background clockWise dataKey="uv" />
-                  <Legend iconSize={10} width={120} height={140} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
-                </RadialBarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-          <Card className="dashboard-card">
-            <CardContent>
-              <h2>Most frequented spaces</h2>
-              <ResponsiveContainer width='100%' height={300}>
-                <RadarChart data={this.spaces}>
-                  <PolarGrid />
-                  <PolarAngleAxis dataKey="subject" />
-                  <PolarRadiusAxis />
-                  <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-                </RadarChart>
-              </ResponsiveContainer>
-            </CardContent>
+            <CardActions>
+              <Button size="small" onClick={this.handleOpenEditUserDialog}>Manage</Button>
+              <Button size="small" onClick={this.handleOpenDeleteUserDialog}>Delete</Button>
+            </CardActions>
           </Card>
         </div>
-        <div className="grid">
-          <Card className="action-card">
-            <CardContent className="card-content">
-              <div className="actions">
-                <div className="action">
-                  <GroupWorkIcon />
-                  <span>Manage start-ups</span>
-                </div>
-                <div className="action">
-                  <GroupAddIcon />
-                  <span>Manage groups</span>
-                </div>
-                <div className="action">
-                  <EventIcon />
-                  <span>Input / Output</span>
-                </div>
-                <div className="action">
-                  <GroupWorkIcon />
-                  <span>Manage start-ups</span>
-                </div>
-                <div className="action">
-                  <GroupWorkIcon />
-                  <span>Manage start-ups</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <Dialog
+          fullWidth={"500"}
+          maxWidth={"500"}
+          open={this.state.openEditUserDialog} onClose={this.handleCloseEditUserDialog} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">Edit user Catalin Stoian</DialogTitle>
+          <DialogContent>
+            { this.getFormStep() }
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleCloseEditUserDialog} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={this.handleCloseEditUserDialog} color="primary">
+              Done
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={this.state.openDeleteUserDialog} onClose={this.handleCloseDeleteUserDialog} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">Are you sure?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              This action can not be undone.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleCloseDeleteUserDialog} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={this.handleCloseDeleteUserDialog} color="primary">
+              Yes
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     )
   }

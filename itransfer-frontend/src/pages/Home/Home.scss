@@ -81,5 +81,23 @@
       }
     }
   }
-
 }
+.container {
+  padding: 20px;
+  .header {
+    color: #404244;
+    font-size: 20px;
+    display: block;
+  }
+}
+.edit-user-form {
+  margin: 20px 0;
+}
+.user-edit-input {
+  margin: 10px 0 !important;
+  width: 90% !important;
+}
+.team-members .user-edit-input {
+  margin: 5px 0;
+}
+

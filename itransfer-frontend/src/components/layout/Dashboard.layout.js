@@ -30,7 +30,7 @@ class DashboardLayout extends Component {
 
   getComponent() {
     switch (this.props.role) {
-      case 1:
+      case 3:
         return <AdminDashboard />;
       case 0:
         return <UserDashboard />;

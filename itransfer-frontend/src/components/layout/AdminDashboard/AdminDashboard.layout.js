@@ -17,7 +17,7 @@ class AdminDashboardLayout extends Component {
     super(props);
     this.state = {
       anchorEl: null,
-      currentPage: props.location.pathname
+      currentPage: props.location.pathname,
     }
   }
 
@@ -52,14 +52,16 @@ class AdminDashboardLayout extends Component {
                 variant="fullWidth"
               >
                 <Tab value="/dashboard" label="Dashboard" onClick={() => {this.navigate("/dashboard")}} />
-                <Tab value="/users" label="Users" onClick={() => {this.navigate("/users")}} />
-                <Tab value="/spaces" label="Spaces" onClick={() => {this.navigate("/spaces")}} />
+                <Tab value="/users" label="Staff" onClick={() => {this.navigate("/users")}} />
+                <Tab value="/payments" label="Payments" onClick={() => {this.navigate("/payments")}} />
+                <Tab value="/events" label="Events" onClick={() => {this.navigate("/events")}} />
               </Tabs>
               <div className="page">
                 <PrivateRoute path="(/|/dashboard)/" component={HomePage}/>
                 <PrivateRoute exact path="/users" component={UsersPage}/>
                 <PrivateRoute path="/users/:id/edit" component={UserEditPage}/>
-                <PrivateRoute path="/spaces" component={SpacesPage}/>
+                <PrivateRoute path="/payments" component={SpacesPage}/>
+                <PrivateRoute path="/events" component={SpacesPage}/>
                 <PrivateRoute path="/profile" component={ProfilePage}/>
               </div>
             </div>

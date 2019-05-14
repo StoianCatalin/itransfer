@@ -11,6 +11,10 @@ export default class EventsService {
     return axios.get(`${this.baseUrl}/rooms`);
   }
 
+  getOffices() {
+    return axios.get(`${this.baseUrl}/offices`);
+  }
+
   createMeeting(meetingBody) {
     return axios.post(`${this.baseUrl}/meeting`, meetingBody);
   }

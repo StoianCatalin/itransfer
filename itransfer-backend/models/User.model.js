@@ -37,6 +37,10 @@ module.exports = (sequelize, type) => {
     },
     startDate: {
       type: Sequelize.BIGINT,
+    },
+    contractUrl: {
+      type: Sequelize.STRING,
+      allowNull: true,
     }
   })
 };

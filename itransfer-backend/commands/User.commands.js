@@ -1,4 +1,4 @@
-const {User, Member, Plan, Payment} = require('../models/DatabaseConnection');
+const {User, Member, Plan, Payment, Office} = require('../models/DatabaseConnection');
 const md5 = require('md5');
 const jwtKey = require('../constants/secret-key').jwtKey;
 const jsonwebtoken = require('jsonwebtoken');
@@ -76,6 +76,13 @@ class UserCommands {
       startDate: new Date(bodyPlan.startDate).getTime(),
       period: plan.period,
     });
+    const office = await Office.findOne({
+      where: {
+        office_id: user.office_id,
+      }
+    });
+    office.userId = dbUser.id;
+    await office.save();
     const token = jsonwebtoken.sign({
       email: dbUser.email,
       full_name: dbUser.full_name,

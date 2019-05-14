@@ -1,8 +1,9 @@
 const Koa = require('koa');
 const http = require('http');
 const bodyParser = require('koa-bodyparser');
+const md5 = require('md5');
 const cors = require('kcors');
-const { sequelize, Plan, Facility, Room } = require('./models/DatabaseConnection');
+const { sequelize, Plan, Facility, Room, Office, User } = require('./models/DatabaseConnection');
 const statusController = require('./controllers/status.controller');
 const authController = require('./controllers/auth.controller');
 const usersController = require('./controllers/users.controller');
@@ -38,6 +39,22 @@ sequelize
       rawdata = fs.readFileSync('./resources/rooms.json');
       const rooms = JSON.parse(rawdata).rooms;
       await Room.bulkCreate(rooms);
+
+      rawdata = fs.readFileSync('./resources/offices.json');
+      const offices = JSON.parse(rawdata).offices;
+      await Office.bulkCreate(offices);
+
+      const user = {
+        full_name: 'Admin',
+        cnp: '1',
+        identity_number: '1',
+        address: '1',
+        email: 'admin@itransfer.ro',
+        password: md5('admin123'),
+        role: 3,
+        startDate: new Date().getTime(),
+      };
+      await User.create(user);
     }
   })
   .catch(err => {

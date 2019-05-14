@@ -34,6 +34,14 @@ const Plan = (sequelize, type) => {
     recipeUrl: {
       type: Sequelize.STRING,
       allowNull: true,
+    },
+    contractUrl: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    payedMethod: {
+      type: Sequelize.STRING,
+      allowNull: true,
     }
   })
 };

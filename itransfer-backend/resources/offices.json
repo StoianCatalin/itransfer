@@ -1,0 +1,36 @@
+{
+  "offices": [
+    {
+      "name": "Office 1",
+      "office_id": 1
+    },
+    {
+      "name": "Office 2",
+      "office_id": 2
+    },
+    {
+      "name": "Office 3",
+      "office_id": 3
+    },
+    {
+      "name": "Office 4",
+      "office_id": 4
+    },
+    {
+      "name": "Office 5",
+      "office_id": 5
+    },
+    {
+      "name": "Office 6",
+      "office_id": 6
+    },
+    {
+      "name": "Office 7",
+      "office_id": 7
+    },
+    {
+      "name": "Office 8",
+      "office_id": 8
+    }
+  ]
+}

@@ -20,9 +20,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import PlansService from "../../services/plans.service";
 import DateFnsUtils from '@date-io/date-fns';
 import AuthService from "../../services/auth.service";
+import EventsService from "../../services/events.service";
 
 function getSteps() {
-  return ['Select your profile', 'Choose your subscription plan', 'Complete with your personal data'];
+  return ['Select your profile', 'Choose your subscription plan', 'Complete with your personal data', 'Choose your office'];
 }
 
 class RegisterPage extends Component {
@@ -32,10 +33,12 @@ class RegisterPage extends Component {
     this.state = {
       activeStep: 0,
       selectedType: 1,
+      selectedOffice: null,
       selectedPlan: 0,
       startDate: new Date(),
       plans: [],
       loading: false,
+      offices: [],
       form: {
         name: '',
         cnp: '',
@@ -57,13 +60,26 @@ class RegisterPage extends Component {
 
     this.plansService = new PlansService();
     this.authService = new AuthService();
+    this.eventsService = new EventsService();
+
+    this.fetchOffices();
+  }
+
+  fetchOffices() {
+    this.eventsService.getOffices().then((response) => {
+      if (response.status === 200) {
+        this.setState({
+          offices: response.data,
+        });
+      }
+    });
   }
 
   handleNext = () => {
     if (this.state.activeStep === 0) {
       this.fetchPlans();
     }
-    if (this.state.activeStep === 2) {
+    if (this.state.activeStep === 3) {
       this.submit();
     } else {
       this.setState(state => ({
@@ -120,6 +136,9 @@ class RegisterPage extends Component {
     if (this.hasMoreMembersInTeam) {
       isInvalid = isInvalid || this.state.form.team.length === 0;
     }
+    if (this.state.selectedOffice === null) {
+      return false;
+    }
     return !isInvalid;
   }
 
@@ -128,6 +147,7 @@ class RegisterPage extends Component {
       try {
         const response = await this.authService.register({
           full_name: this.state.form.name,
+          office_id: this.state.selectedOffice,
           ...this.state.form,
         }, { planId: this.state.selectedPlan, startDate: new Date(this.state.startDate).getTime() });
         if (response.status === 200) {
@@ -352,6 +372,58 @@ class RegisterPage extends Component {
     );
   }
 
+  selectOffice(officeId) {
+    const office = this.getOffice(officeId);
+    if (office && office.userId) {
+      return;
+    }
+    this.setState({
+      selectedOffice: officeId,
+    })
+  }
+
+  getOffice(id) {
+    return this.state.offices.find((office) => office.id === id);
+  }
+
+  getOfficeClass(id) {
+    const office = this.getOffice(id);
+    if (office && office.userId) {
+      return ' busy';
+    }
+    if (office && this.state.selectedOffice === office.office_id) {
+      return ' selected';
+    }
+    return '';
+  }
+
+  getOfficeStep() {
+    return (
+      [<div className="office-container">
+        <div className={"office" + this.getOfficeClass(1)} onClick={() => { this.selectOffice(1) }}>Office</div>
+        <div className={"office" + this.getOfficeClass(2)} onClick={() => { this.selectOffice(2) }}>Office</div>
+        <div className={"office" + this.getOfficeClass(3)} onClick={() => { this.selectOffice(3) }}>Office</div>
+        <div className={"office" + this.getOfficeClass(4)} onClick={() => { this.selectOffice(4) }}>Office</div>
+        <div className="hall" />
+        <div className={"office" + this.getOfficeClass(5)} onClick={() => { this.selectOffice(5) }}>Office</div>
+        <div className={"office" + this.getOfficeClass(6)} onClick={() => { this.selectOffice(6) }}>Office</div>
+        <div className={"office" + this.getOfficeClass(7)} onClick={() => { this.selectOffice(7) }}>Office</div>
+        <div className={"office" + this.getOfficeClass(8)} onClick={() => { this.selectOffice(8) }}>Office</div>
+      </div>,
+      <div className="legend">
+        <div className="item">
+          Taken <div className="taken" />
+        </div>
+        <div className="item">
+          Selected <div className="selected" />
+        </div>
+        <div className="item">
+          Free <div className="free" />
+        </div>
+      </div>]
+    )
+  }
+
   getStepContent(step) {
     switch (step) {
       case 0:
@@ -360,6 +432,8 @@ class RegisterPage extends Component {
         return this.getSubscriptionStep();
       case 2:
         return this.getFormStep();
+      case 3:
+        return this.getOfficeStep();
       default:
         return 'Unknown step';
     }
