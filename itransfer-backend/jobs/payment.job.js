@@ -23,8 +23,10 @@ class PaymentJob {
         },
         order: [ ['startDate', 'DESC'] ],
       });
+      if (!payment) {
+        return;
+      }
       const difference = payment.period === 'month' ? 2592000000 : 86400000; // month or day
-      console.log(new Date().getTime() - payment.startDate);
       if (new Date().getTime() - payment.startDate >= difference) {
         await Payment.create({
           name: user.plan.name,

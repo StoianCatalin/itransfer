@@ -15,4 +15,20 @@ export default class UserService {
     return axios.post(`${this.baseUrl}/members`, members);
   }
 
+  getAllUsers() {
+    return axios.get(`${this.baseUrl}`);
+  }
+
+  saveUser(user) {
+    return axios.post(`${this.baseUrl}`, user);
+  }
+
+  downloadContractUrl(contractUrl) {
+    return `${this.baseUrl}/contracts/${contractUrl}`;
+  }
+
+  deleteUser(userId) {
+    return axios.delete(`${this.baseUrl}/${userId}`);
+  }
+
 }

@@ -11,72 +11,246 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {Textbox} from "react-inputs-validation";
+import UserService from "../../services/user.service";
+import {FilePond} from "react-filepond";
+import {withRouter} from "react-router-dom";
+import {connect} from "react-redux";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
+import EventsService from "../../services/events.service";
+import IconButton from "@material-ui/core/IconButton";
+import Snackbar from "@material-ui/core/Snackbar";
+import {closeSnackbar, openSnackbar} from "../../actions/snackbar";
+import CloseIcon from '@material-ui/icons/Close';
 
 
 
-export default class HomePage extends Component {
+class HomePage extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      account: this.props.account,
+      plans: [],
+      offices: [],
       openEditUserDialog: false,
       openDeleteUserDialog: false,
+      selectedUser: {},
+      users: [],
       form: {
-        name: '',
+        full_name: '',
         cnp: '',
         identity_number: '',
         address: '',
         email: '',
-        password: '',
         team: [],
       },
       formValidation: {
-        name: true,
-        cnp: true,
-        identity_number: true,
-        address: true,
-        email: true,
-        password: true,
+        full_name: false,
+        cnp: false,
+        identity_number: false,
+        address: false,
+        email: false,
       },
-    }
+    };
+
+    this.userService = new UserService();
+    this.eventsService = new EventsService();
+    this.fetchUsers();
+    this.fetchOffices();
+  }
+
+  componentWillReceiveProps(nextProps, nextContext) {
+    this.setState({ ...nextProps });
+  }
+
+  deleteUser = () => {
+    this.userService.deleteUser(this.state.selectedUser.id).then((response) => {
+      this.fetchUsers();
+      this.handleCloseDeleteUserDialog();
+    });
+  }
+
+  fetchUsers() {
+    this.userService.getAllUsers().then((response) => {
+      if (response.status === 200) {
+        this.setState({
+          users: response.data,
+        });
+      }
+    });
+  }
+
+  fetchOffices() {
+    this.eventsService.getOffices().then((response) => {
+      if (response.status === 200) {
+        this.setState({
+          offices: response.data,
+        });
+      }
+    });
   }
 
   handleCloseEditUserDialog = () => {
     this.setState({
       openEditUserDialog: false,
+      selectedUser: {},
     });
   };
 
-  handleOpenEditUserDialog = () => {
+  handleOpenEditUserDialog = (user) => {
     this.setState({
       openEditUserDialog: true,
+      selectedUser: user,
+      form: { ...user, team: [...user.members] },
     });
   };
 
   handleCloseDeleteUserDialog = () => {
     this.setState({
       openDeleteUserDialog: false,
+      selectedUser: {},
     });
   };
 
-  handleOpenDeleteUserDialog = () => {
+  handleOpenDeleteUserDialog = (user) => {
     this.setState({
       openDeleteUserDialog: true,
+      selectedUser: user,
     });
   };
+
+  handleChangeOffice = (event) => {
+    this.setState({
+      form: { ...this.state.form, office: this.state.offices.find((office) => office.office_id === event.target.value) }
+    });
+  };
+
+  submit = () => {
+    let isInvalid = false;
+    for (const prop of Object.getOwnPropertyNames(this.state.formValidation)) {
+      isInvalid = isInvalid || this.state.formValidation[prop];
+    }
+    if (!isInvalid) {
+      this.userService.saveUser(this.state.form).then((response) => {
+        if (response.status === 200) {
+          this.props.openSnackbar(response.data.message);
+        }
+        this.fetchUsers();
+        this.handleCloseEditUserDialog();
+      });
+    }
+  };
+
+  generateTeamMembersFields() {
+    const elements = [];
+    if (this.state.form.team.length === 0) {
+      return (<span>No team members</span>);
+    }
+    for (let index = 0; index < this.state.form.team.length; index++) {
+      elements.push(<Textbox
+        classNameInput="user-edit-input"
+        id={`nameOfMember${index}`}
+        name={`nameOfMember${index}`}
+        type="text"
+        value={this.state.form.team[index].full_name}
+        validate={true}
+        onChange={(name) => {
+          const team = this.state.form.team.map(i => i);
+          team[index].full_name = name;
+          this.setState({ form: { ...this.state.form, team: [...team]  }});
+        }}
+        placeholder={`Team member ${index + 1}`}
+        onBlur={() => {}}
+        validationOption={{
+          name: 'Name of team member',
+          check: true,
+          required: index === 0
+        }} />);
+    }
+    return elements;
+  }
+
+  downloadContract(contractUrl) {
+    const element = document.createElement('a');
+    element.setAttribute('href', this.userService.downloadContractUrl(contractUrl) + `/${this.state.account.token}`);
+    element.setAttribute('target', "_blank");
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  }
+
+  receiptMethodRender() {
+    if (!this.state.selectedUser.id) {
+      return null;
+    }
+    return (
+      <div className="method-container">
+        { this.state.selectedUser.contractUrl && (<span className="download-contract" onClick={() => { this.downloadContract(this.state.selectedUser.contractUrl); }}>Download contract</span>) }
+        <FilePond
+          acceptedFileTypes={['image/*', 'application/pdf']}
+          server={
+            {
+              url: `http://localhost:3001/users/upload/${this.state.selectedUser.id}`,
+              process: {
+                headers: {
+                  'authorization': `Bearer ${this.state.account.token}`
+                }
+              },
+              revert: {
+                headers: {
+                  'authorization': `Bearer ${this.state.account.token}`
+                }
+              },
+            }
+          }/>
+      </div>
+    );
+  }
+
+  renderOfficeDropdown() {
+    if (!this.state.form || !this.state.form.office ) {
+      return;
+    }
+    return (
+      <div className="office-dropdown">
+        <FormControl className="select-room">
+          <Select
+            value={this.state.form.office.office_id}
+            onChange={this.handleChangeOffice}
+            inputProps={{
+              name: 'office',
+              id: 'office-simple',
+            }}
+          >
+            { this.state.offices.map((office) => {
+              return (
+                <MenuItem value={office.office_id}>{ office.name }</MenuItem>
+              );
+            }) }
+          </Select>
+        </FormControl>
+      </div>
+    );
+  }
 
   getFormStep() {
     return (
       <div className="edit-user-form">
         <Textbox
-          id={'name'}
-          name={'name'}
+          id={'full_name'}
+          name={'full_name'}
           type="text"
-          value={this.state.form.name}
+          value={this.state.form.full_name}
           validate={true}
-          onChange={(name) => { this.setState({ form: { ...this.state.form, name } }); }}
+          onChange={(full_name) => { this.setState({ form: { ...this.state.form, full_name } }); }}
           placeholder="Your full name"
-          validationCallback={name => { this.setState({ formValidation: { ...this.state.formValidation, name } }) } }
+          validationCallback={full_name => { this.setState({ formValidation: { ...this.state.formValidation, full_name } }) } }
           onBlur={() => {}}
           validationOption={{
             name: 'Full name',
@@ -163,28 +337,6 @@ export default class HomePage extends Component {
             }
           }}
         />
-        <Textbox
-          classNameInput="user-edit-input"
-          id={'password'}
-          name={'password'}
-          type="password"
-          value={this.state.form.password}
-          validate={true}
-          onChange={(password) => { this.setState({ form: { ...this.state.form, password } }); }}
-          placeholder="Password"
-          validationCallback={password => { this.setState({ formValidation: { ...this.state.formValidation, password } }) } }
-          onBlur={() => {}}
-          validationOption={{
-            name: 'Password',
-            check: true,
-            required: true,
-            min: 6
-          }}
-        />
-        { this.hasMoreMembersInTeam && <div className="team-members">
-          <h4>Team Members</h4>
-          { this.generateTeamMembersFields() }
-        </div> }
       </div>
     );
   }
@@ -195,38 +347,62 @@ export default class HomePage extends Component {
       <div className="container">
         <h2 className="header">Dashboard</h2>
         <div className="grid three">
-          <Card>
-            <CardContent>
-              <Typography variant="h5" component="h2">
-                Catalin Stoian
-              </Typography>
-              <Typography component="p">
-                Office: 2 <br />
-                Team Members: 3 <br />
-                Subscription plan: Team Access (450 euro) <br />
-                Status: Active
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button size="small" onClick={this.handleOpenEditUserDialog}>Manage</Button>
-              <Button size="small" onClick={this.handleOpenDeleteUserDialog}>Delete</Button>
-            </CardActions>
-          </Card>
+          { this.state.users.map((user) => {
+            const status = user.payments.find((payment) => payment.status === 'unpaid') ? 'Unpaid' : 'Payed';
+            return (
+              <Card className="user-card">
+                <CardContent>
+                  <Typography variant="h5" component="h2">
+                    { user.full_name }
+                  </Typography>
+                  <Typography component="p">
+                    <span>Office</span>: { user.office ? user.office.name : 'Unassigned' } <br />
+                    <span>Team Members</span>: { user.members.length + 1 } <br />
+                    <span>Subscription plan</span>: { user.plan.name } ({ user.plan.price } euro) <br />
+                    <span>Status</span>: <b>{ status }</b> for last month
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button size="small" onClick={() => { this.handleOpenEditUserDialog(user); }}>Manage</Button>
+                  <Button size="small" onClick={() => { this.handleOpenDeleteUserDialog(user); }}>Delete</Button>
+                </CardActions>
+              </Card>
+            );
+          }) }
         </div>
         <Dialog
           fullWidth={"500"}
           maxWidth={"500"}
           open={this.state.openEditUserDialog} onClose={this.handleCloseEditUserDialog} aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">Edit user Catalin Stoian</DialogTitle>
+          <DialogTitle id="form-dialog-title">Edit { this.state.selectedUser.full_name }</DialogTitle>
           <DialogContent>
-            { this.getFormStep() }
+            <div className="grid-manage-user">
+              <div className="two-items">
+                <h4>General information</h4>
+                { this.getFormStep() }
+              </div>
+              { this.state.selectedUser && this.state.selectedUser.plan && this.state.selectedUser.plan.allowMoreThanOne && <div className="two-items">
+                <div className="team-members">
+                  <h4>Team Members</h4>
+                  { this.generateTeamMembersFields() }
+                </div>
+              </div> }
+              <div className="two-items">
+                <h4>Contract</h4>
+                { this.receiptMethodRender() }
+              </div>
+              <div className="two-items">
+                <h4>Office</h4>
+                { this.renderOfficeDropdown() }
+              </div>
+            </div>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleCloseEditUserDialog} color="primary">
-              Cancel
+              Close
             </Button>
-            <Button onClick={this.handleCloseEditUserDialog} color="primary">
-              Done
+            <Button variant="contained" onClick={this.submit} color="primary">
+              Save
             </Button>
           </DialogActions>
         </Dialog>
@@ -242,13 +418,55 @@ export default class HomePage extends Component {
             <Button onClick={this.handleCloseDeleteUserDialog} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.handleCloseDeleteUserDialog} color="primary">
+            <Button onClick={this.deleteUser} color="primary">
               Yes
             </Button>
           </DialogActions>
         </Dialog>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          open={this.props.snackbar.open}
+          autoHideDuration={6000}
+          onClose={this.handleClose}
+          ContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          message={<span id="message-id">{ this.props.snackbar.message }</span>}
+          action={[
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={this.props.closeSnackbar}
+            >
+              <CloseIcon />
+            </IconButton>,
+          ]}
+        />
       </div>
     )
   }
 }
 
+const mapDispatchToProps = dispatch => {
+  return {
+    openSnackbar: (message) => {
+      dispatch(openSnackbar(message));
+    },
+    closeSnackbar: () => {
+      dispatch(closeSnackbar());
+    }
+  };
+};
+
+const mapStateToProps = state => {
+  return {
+    account: { ...state.user, members: null },
+    snackbar: state.snackbar,
+  }
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HomePage))
