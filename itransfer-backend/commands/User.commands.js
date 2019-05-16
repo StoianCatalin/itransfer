@@ -188,6 +188,41 @@ class UserCommands {
       },
     }
   }
+
+  async createStaff(payload) {
+    if (!payload.password) {
+      return { status: 400, message: 'Password is empty' };
+    }
+    const user = await User.create({
+      ...payload,
+      cnp: '1',
+      identity_number: '1',
+      address: '1',
+      startDate: new Date().getTime(),
+      password: md5(payload.password),
+    });
+    return { status: 200, user };
+  }
+
+  async saveStaff(payload) {
+    const user = await User.findOne({ where: { id: payload.id } });
+
+    if (user.email !== payload.email) {
+      const checkUser = await User.findOne({ where: { email: payload.email } });
+      if (checkUser) {
+        return { status: 409, message: 'Email already taken.' };
+      }
+    }
+
+    user.full_name = payload.full_name;
+    user.email = payload.email;
+    user.role = payload.role;
+    if (payload.password) {
+      user.password = md5(payload.password);
+    }
+    await user.save();
+    return { status: 200, message: 'User updated' }
+  }
 }
 
 module.exports = { UserCommands };

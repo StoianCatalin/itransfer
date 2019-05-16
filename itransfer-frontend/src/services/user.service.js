@@ -31,4 +31,16 @@ export default class UserService {
     return axios.delete(`${this.baseUrl}/${userId}`);
   }
 
+  getStaff() {
+    return axios.get(`${this.baseUrl}/staff`);
+  }
+
+  saveStaff(user) {
+    return axios.put(`${this.baseUrl}/staff/${user.id}`, user);
+  }
+
+  createStaff(user) {
+    return axios.post(`${this.baseUrl}/staff`, user);
+  }
+
 }

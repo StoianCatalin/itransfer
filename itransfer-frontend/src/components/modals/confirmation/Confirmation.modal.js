@@ -8,11 +8,7 @@ import './ConfirmationModal.scss';
 import Button from '@material-ui/core/Button';
 
 export class ConfirmationModal extends React.Component {
-  handleClose = () => {
-    this.props.onClose(this.props.selectedValue);
-  };
-
-  handleListItemClick = value => {
+  handleClose = (value) => {
     this.props.onClose(value);
   };
 
@@ -28,10 +24,10 @@ export class ConfirmationModal extends React.Component {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={this.handleClose} color="primary">
+          <Button onClick={() => {this.handleClose(false); }} color="primary">
             Cancel
           </Button>
-          <Button onClick={this.handleClose} color="primary" autoFocus>
+          <Button onClick={() => {this.handleClose(true); }} color="primary" autoFocus>
             Yes
           </Button>
         </DialogActions>

@@ -7,7 +7,6 @@ import HomePage from "../../../pages/Home/Home.page";
 import UsersPage from "../../../pages/Users/Users.page";
 import SpacesPage from "../../../pages/Spaces/Spaces.page";
 import {connect} from "react-redux";
-import UserEditPage from "../../../pages/Users/edit/UserEdit.page";
 import ProfilePage from '../../../pages/Profile/Profile.page';
 import Header from '../../header/Header.component';
 
@@ -59,7 +58,6 @@ class AdminDashboardLayout extends Component {
               <div className="page">
                 <PrivateRoute path="(/|/dashboard)/" component={HomePage}/>
                 <PrivateRoute exact path="/users" component={UsersPage}/>
-                <PrivateRoute path="/users/:id/edit" component={UserEditPage}/>
                 <PrivateRoute path="/payments" component={SpacesPage}/>
                 <PrivateRoute path="/events" component={SpacesPage}/>
                 <PrivateRoute path="/profile" component={ProfilePage}/>

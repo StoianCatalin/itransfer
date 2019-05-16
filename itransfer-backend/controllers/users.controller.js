@@ -4,6 +4,7 @@ const { UserCommands } = require('../commands/User.commands');
 const {User} = require('../models/DatabaseConnection');
 const { hasAdminAccess, hasSecretarAccess } = require('../middlewares/role.middleware');
 const koaBody = require("koa-body");
+const Op = require('sequelize').Op;
 const fs = require('fs');
 const mime = require('mime-types');
 const jwtKey = require('../constants/secret-key').jwtKey;
@@ -97,6 +98,37 @@ router.get('/contracts/:fileName/:token', async (ctx, next) => {
     ctx.set('Content-Type', mimeType);
     ctx.response.body = fs.readFileSync(__dirname + `/../resources/contracts/${client.contractUrl}`);
   }
+  await next();
+});
+
+router.get('/staff', isAuthenticated, hasAdminAccess, async (ctx, next) => {
+  const users = await User.findAll({
+    where: {
+      role: {
+        [Op.ne]: 0
+      }
+    }
+  }).map((user) => {
+    user.password = null;
+    return user;
+  });
+  ctx.response.body = users;
+  await next();
+});
+
+router.post('/staff', isAuthenticated, hasAdminAccess, async (ctx, next) => {
+  const userCommands = new UserCommands();
+  const response = await userCommands.createStaff(ctx.request.body);
+  ctx.response.status = response.status;
+  ctx.response.body = response.body;
+  await next();
+});
+
+router.put('/staff/:userId', isAuthenticated, hasAdminAccess, async (ctx, next) => {
+  const userCommands = new UserCommands();
+  const response = await userCommands.saveStaff(ctx.request.body);
+  ctx.response.status = response.status;
+  ctx.response.body = response.body;
   await next();
 });
 
