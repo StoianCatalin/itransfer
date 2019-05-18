@@ -1,7 +1,7 @@
 const CoreRouter = require('koa-router');
 const isAuthenticated = require('../middlewares/authentication.middleware').isAuthenticated;
 const { UserCommands } = require('../commands/User.commands');
-const {User} = require('../models/DatabaseConnection');
+const {User, Payment} = require('../models/DatabaseConnection');
 const { hasAdminAccess, hasSecretarAccess } = require('../middlewares/role.middleware');
 const koaBody = require("koa-body");
 const Op = require('sequelize').Op;
@@ -82,14 +82,12 @@ router.get('/contracts/:fileName/:token', async (ctx, next) => {
     return;
   }
   const user = await User.findOne({ where: { id: ctx.state.user.id } });
+  const client = await User.findOne({ where: { contractUrl: fileName } });
 
-  console.log(user.role);
-  if (user.role !== 3 && user.role !== 2) {
+  if ((user.role !== 3 && user.role !== 2) && user.id !== client.id) {
     ctx.response.status = 401;
     return;
   }
-
-  const client = await User.findOne({ where: { contractUrl: fileName } });
 
   if (!client) {
     ctx.response.status = 404;
@@ -97,6 +95,36 @@ router.get('/contracts/:fileName/:token', async (ctx, next) => {
     const mimeType = mime.lookup(__dirname + `/../resources/contracts/${client.contractUrl}`);
     ctx.set('Content-Type', mimeType);
     ctx.response.body = fs.readFileSync(__dirname + `/../resources/contracts/${client.contractUrl}`);
+  }
+  await next();
+});
+
+router.get('/receipts/:fileName/:token', async (ctx, next) => {
+  const token = ctx.params.token;
+  const fileName = ctx.params.fileName;
+
+  try {
+    ctx.state.user = jsonwebtoken.verify(token, jwtKey);
+  } catch (e) {
+    ctx.response.status = 400;
+    ctx.response.body = { message: 'Invalid token' };
+    return;
+  }
+  const user = await User.findOne({ where: { id: ctx.state.user.id } });
+  const payment = await Payment.findOne({ where: { recipeUrl: fileName } });
+  console.log(payment.userId, user.role, user.id);
+
+  if (user.role < 1 && user.id !== payment.userId) {
+    ctx.response.status = 401;
+    return;
+  }
+
+  if (!payment) {
+    ctx.response.status = 404;
+  } else {
+    const mimeType = mime.lookup(__dirname + `/../resources/receipts/${payment.recipeUrl}`);
+    ctx.set('Content-Type', mimeType);
+    ctx.response.body = fs.readFileSync(__dirname + `/../resources/receipts/${payment.recipeUrl}`);
   }
   await next();
 });

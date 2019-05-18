@@ -27,6 +27,10 @@ export default class UserService {
     return `${this.baseUrl}/contracts/${contractUrl}`;
   }
 
+  downloadRecipeUrl(recipeUrl) {
+    return `${this.baseUrl}/receipts/${recipeUrl}`;
+  }
+
   deleteUser(userId) {
     return axios.delete(`${this.baseUrl}/${userId}`);
   }

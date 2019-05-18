@@ -1,7 +1,5 @@
 const {User, Member, Plan, Payment, Office} = require('../models/DatabaseConnection');
 const md5 = require('md5');
-const jwtKey = require('../constants/secret-key').jwtKey;
-const jsonwebtoken = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs');
 
@@ -151,10 +149,6 @@ class UserCommands {
         await Member.create({ full_name: teamMember, userId: dbUser.id });
       }
     }
-    const members = await Member.findAll({
-      where: { userId: dbUser.id },
-      raw: true,
-    });
     await Payment.create({
       userId: dbUser.id,
       planId: plan.id,
@@ -170,22 +164,9 @@ class UserCommands {
     });
     office.userId = dbUser.id;
     await office.save();
-    const token = jsonwebtoken.sign({
-      email: dbUser.email,
-      full_name: dbUser.full_name,
-      id: dbUser.id,
-    }, jwtKey, { expiresIn: 60 * 60 });
     return {
       status: 200,
-      body: {
-        token,
-        members,
-        plan,
-        email: dbUser.email,
-        full_name: dbUser.full_name,
-        id: dbUser.id,
-        role: user.role,
-      },
+      body: { message: 'Account created. Now you have to wait until a staff member will activate your account.' },
     }
   }
 

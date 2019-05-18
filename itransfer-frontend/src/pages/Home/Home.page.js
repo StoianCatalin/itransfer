@@ -359,7 +359,8 @@ class HomePage extends Component {
                     <span>Office</span>: { user.office ? user.office.name : 'Unassigned' } <br />
                     <span>Team Members</span>: { user.members.length + 1 } <br />
                     <span>Subscription plan</span>: { user.plan.name } ({ user.plan.price } euro) <br />
-                    <span>Status</span>: <b>{ status }</b> for last month
+                    <span>Account status</span>: { user.contractUrl ? 'Active' : 'Not active' }<br />
+                    <span>Payment status</span>: <b>{ status }</b> for last month
                   </Typography>
                 </CardContent>
                 <CardActions>

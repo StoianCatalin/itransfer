@@ -1,10 +1,20 @@
 const { PaymentCommands } = require('../commands/Payment.commands');
 const koaBody = require("koa-body");
-
+const { hasAdminAccess, hasSecretarAccess, hasContabilAccess } = require('../middlewares/role.middleware');
+const {Payment, User} = require('../models/DatabaseConnection');
 const CoreRouter = require('koa-router');
 const isAuthenticated = require('../middlewares/authentication.middleware').isAuthenticated;
 
 const router = new CoreRouter();
+
+router.get('/', isAuthenticated, hasContabilAccess, async (ctx, next) => {
+  ctx.response.body = await Payment.findAll({
+    include: [User],
+    order: [['startDate', 'DESC']]
+  });
+  await next();
+});
+
 router.get('/all', isAuthenticated,async (ctx, next) => {
   const paymentCommands = new PaymentCommands();
   const payments = await paymentCommands.getLastTen(ctx.state.user.id);

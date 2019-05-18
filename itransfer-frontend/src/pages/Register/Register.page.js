@@ -151,7 +151,7 @@ class RegisterPage extends Component {
           ...this.state.form,
         }, { planId: this.state.selectedPlan, startDate: new Date(this.state.startDate).getTime() });
         if (response.status === 200) {
-          this.props.login(response.data);
+          this.props.openSnackbar(response.data.message);
           this.setState(state => ({
             loading: this.state.activeStep === 0,
             activeStep: state.activeStep + 1,
@@ -374,7 +374,7 @@ class RegisterPage extends Component {
 
   selectOffice(officeId) {
     const office = this.getOffice(officeId);
-    if (office && office.userId) {
+    if (office && office.busy) {
       return;
     }
     this.setState({
@@ -388,7 +388,7 @@ class RegisterPage extends Component {
 
   getOfficeClass(id) {
     const office = this.getOffice(id);
-    if (office && office.userId) {
+    if (office && office.busy) {
       return ' busy';
     }
     if (office && this.state.selectedOffice === office.office_id) {
@@ -482,9 +482,9 @@ class RegisterPage extends Component {
           {activeStep === steps.length && (
             <Paper square elevation={0}>
               <Typography>All steps completed - you&apos;re finished</Typography>
-              <Button onClick={this.handleReset}>
-                Reset
-              </Button>
+              <div className="login-link">
+                <Link to="/login">Take me to login page!</Link>
+              </div>
             </Paper>
           )}
           <div className="login-link">

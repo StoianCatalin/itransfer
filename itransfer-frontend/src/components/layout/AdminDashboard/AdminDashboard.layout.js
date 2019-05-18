@@ -5,7 +5,8 @@ import { history } from '../../../reducers/history';
 import PrivateRoute from "../../../common/PrivateRoute";
 import HomePage from "../../../pages/Home/Home.page";
 import UsersPage from "../../../pages/Users/Users.page";
-import SpacesPage from "../../../pages/Spaces/Spaces.page";
+import PaymentsPage from "../../../pages/Payments/Payments.page";
+import EventsPage from "../../../pages/Events/Events.page";
 import {connect} from "react-redux";
 import ProfilePage from '../../../pages/Profile/Profile.page';
 import Header from '../../header/Header.component';
@@ -58,8 +59,8 @@ class AdminDashboardLayout extends Component {
               <div className="page">
                 <PrivateRoute path="(/|/dashboard)/" component={HomePage}/>
                 <PrivateRoute exact path="/users" component={UsersPage}/>
-                <PrivateRoute path="/payments" component={SpacesPage}/>
-                <PrivateRoute path="/events" component={SpacesPage}/>
+                <PrivateRoute path="/payments" component={PaymentsPage}/>
+                <PrivateRoute path="/events" component={EventsPage}/>
                 <PrivateRoute path="/profile" component={ProfilePage}/>
               </div>
             </div>

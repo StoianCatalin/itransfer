@@ -55,7 +55,10 @@ class PaymentCommands {
     const payment = await Payment.findOne({
       where: { id: paymentId }
     });
-    if (payment.userId !== userId) {
+    const user = await User.findOne({
+      where: { id: userId },
+    });
+    if (payment.userId !== userId && user.role === 0) {
       return {
         status: 401,
       }
@@ -72,8 +75,9 @@ class PaymentCommands {
     });
     readStream.pipe(writeStream);
     payment.payedDate = new Date().getTime();
-    payment.status = 'processing';
-    payment.recipeUrl = uploadDir + fileName;
+    payment.status = user.role === 0 ? 'processing' : 'paid';
+    payment.payedMethod = user.role === 0 ? 'Bank transfer' : 'Cash';
+    payment.recipeUrl = fileName;
     await payment.save();
     return {
       status: 200
@@ -90,8 +94,9 @@ class PaymentCommands {
       }
     }
     payment.payedDate = new Date().getTime();
-    payment.status = 'payed';
+    payment.status = 'paid';
     payment.recipeUrl = this.generateRandomName(20);
+    payment.payedMethod = 'Card';
     await payment.save();
     return { status: 200 };
   }

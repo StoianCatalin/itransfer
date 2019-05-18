@@ -24,6 +24,7 @@ import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import Cards from 'react-credit-cards';
 import {Number, Cvc, Expiration} from 'react-credit-card-primitives'
 import PaymentService from "../../services/payment.service";
+import UserService from "../../services/user.service";
 
 registerPlugin(FilePondPluginFileValidateType);
 
@@ -55,6 +56,7 @@ class UserHomePage extends Component {
     };
     this.props.fetchPayments();
     this.paymentService = new PaymentService();
+    this.userService = new UserService();
 
   }
 
@@ -86,12 +88,6 @@ class UserHomePage extends Component {
     });
   };
 
-  handleChangePayMethod = (method) => {
-    this.setState({
-      paymentInfo: { method }
-    });
-  };
-
   submitCardPayment() {
     const { number, name, expiry, cvc } = this.state.card;
     if (number && name && expiry && cvc) {
@@ -101,30 +97,6 @@ class UserHomePage extends Component {
         });
       });
     }
-  }
-
-  receiptMethodRender() {
-    return (
-      <div className="method-container">
-        <FilePond
-          acceptedFileTypes={['image/*']}
-          server={
-          {
-            url: `http://localhost:3001/payments/upload/${this.state.paymentSelected.id}`,
-            process: {
-              headers: {
-                'authorization': `Bearer ${this.state.user.token}`
-              }
-            },
-            revert: {
-              headers: {
-                'authorization': `Bearer ${this.state.user.token}`
-              }
-            },
-          }
-        }/>
-      </div>
-    );
   }
 
   setFocusedField(fieldName) {
@@ -195,12 +167,40 @@ class UserHomePage extends Component {
     );
   }
 
+  downloadContract(contractUrl) {
+    const element = document.createElement('a');
+    element.setAttribute('href', this.userService.downloadContractUrl(contractUrl) + `/${this.state.user.token}`);
+    element.setAttribute('target', "_blank");
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  }
+
+  downloadRecipe(recipeUrl) {
+    const element = document.createElement('a');
+    element.setAttribute('href', this.userService.downloadRecipeUrl(recipeUrl) + `/${this.props.user.token}`);
+    element.setAttribute('target', "_blank");
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  }
+
   render() {
     const { number, name, expiry, cvc } = this.state.card;
     return (
       <div className="container user-home">
         <h2 className="header">Dashboard</h2>
         <Divider />
+        <br />
+        { this.state.user.contractUrl && (<span className="download-contract" onClick={() => { this.downloadContract(this.state.user.contractUrl); }}>Download contract</span>) }
         <h4>Team members</h4>
         <Table>
           <TableHead>
@@ -270,6 +270,7 @@ class UserHomePage extends Component {
               <TableCell>Subscription plan</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Date</TableCell>
+              <TableCell>Bill</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -282,6 +283,10 @@ class UserHomePage extends Component {
                   </TableCell>
                   <TableCell><span className={"status " + payment.status}>{ payment.status }</span></TableCell>
                   <TableCell>{ new Date(payment.startDate).toLocaleString('en-us', { day: '2-digit', month: 'long', year: 'numeric' }) }</TableCell>
+                  <TableCell>
+                    { payment.recipeUrl && payment.payedMethod !== 'Card' &&
+                    (<span className="download-contract" onClick={() => { this.downloadRecipe(payment.recipeUrl); }}>Download bill</span>) || '-' }
+                  </TableCell>
                   <TableCell>
                     <Button variant="contained" color="primary" disabled={payment.status !== 'unpaid'} onClick={() => { this.openPaymentModal(payment); }}>
                       Pay
@@ -299,36 +304,18 @@ class UserHomePage extends Component {
         >
           <DialogTitle id="form-dialog-title">Payment</DialogTitle>
           <DialogContent>
-            <div className="choose-method" onClick={() => { this.handleChangePayMethod(1) }}>
-              <Radio checked={this.state.paymentInfo.method === 1} value="1" />
-              Upload bank receipt
-            </div>
-            <div className="choose-method" onClick={() => { this.handleChangePayMethod(2) }}>
-              <Radio checked={this.state.paymentInfo.method === 2} value="2" />
-              Credit card
-            </div>
             <DialogContentText>
-              If you choose to pay via bank receipt, your submission must be checked by our team. Also meke sure you upload a readable photo/scan.
+              You can pay your subscription with a debit card. If you do this, then your payment will be processed in maximum 24 hours.
             </DialogContentText>
-            { this.state.paymentInfo.method === 1 && this.receiptMethodRender() }
-            { this.state.paymentInfo.method === 2 && this.creditCardMethodRender() }
+            {this.creditCardMethodRender()}
           </DialogContent>
           <DialogActions>
-            { this.state.paymentInfo.method === 1 && (
-              <Button onClick={this.handleClosePaymentModal} color="primary">
-                Done
-              </Button>
-            ) }
-            { this.state.paymentInfo.method === 2 && (
-              [
-                <Button variant="contained" color="primary" disabled={!(number && name && expiry && cvc)} onClick={() => { this.submitCardPayment() }}>
-                  Pay
-                </Button>,
-                <Button onClick={this.handleClosePaymentModal} color="primary">
-                Cancel
-                </Button>
-              ]
-            ) }
+            <Button variant="contained" color="primary" disabled={!(number && name && expiry && cvc)} onClick={() => { this.submitCardPayment() }}>
+              Pay
+            </Button>,
+            <Button onClick={this.handleClosePaymentModal} color="primary">
+              Cancel
+            </Button>
           </DialogActions>
         </Dialog>
       </div>

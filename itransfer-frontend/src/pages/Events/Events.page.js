@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import './Spaces.scss';
+import './Events.scss';
 
-class SpacesPage extends Component {
+class EventsPage extends Component {
 
   constructor(props) {
     super(props);
@@ -38,6 +38,6 @@ const mapStateToProps = state => {
   }
 };
 
-export default withRouter(connect(mapStateToProps)(SpacesPage))
+export default withRouter(connect(mapStateToProps)(EventsPage))
 
 

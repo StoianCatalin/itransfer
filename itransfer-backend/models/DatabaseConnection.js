@@ -34,8 +34,10 @@ User.belongsTo(Plan);
 User.hasMany(Payment);
 User.hasMany(Meeting);
 User.hasOne(Office);
+Office.belongsTo(User);
 Meeting.belongsTo(Room);
 Payment.belongsTo(Plan);
+Payment.belongsTo(User);
 
 module.exports = {
   sequelize,
