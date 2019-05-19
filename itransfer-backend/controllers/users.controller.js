@@ -28,7 +28,7 @@ router.post('/members', isAuthenticated, async (ctx, next) => {
   await next();
 });
 
-router.get('/', isAuthenticated, hasAdminAccess, async (ctx, next) => {
+router.get('/', isAuthenticated, hasSecretarAccess, async (ctx, next) => {
   const userCommands = new UserCommands();
   ctx.response.body = await userCommands.getAllUsers();
   await next();

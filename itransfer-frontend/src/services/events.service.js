@@ -27,4 +27,24 @@ export default class EventsService {
     return axios.delete(`${this.baseUrl}/meeting/${eventId}`);
   }
 
+  getEvents() {
+    return axios.get(`${this.baseUrl}/events`);
+  }
+
+  createEvent(payload) {
+    return axios.post(`${this.baseUrl}/events`, payload);
+  }
+
+  editEvent(payload) {
+    return axios.put(`${this.baseUrl}/events`, payload);
+  }
+
+  deleteEvent(eventId) {
+    return axios.delete(`${this.baseUrl}/events/${eventId}`);
+  }
+
+  signUpEvent(eventId) {
+    return axios.post(`${this.baseUrl}/events/signup/${eventId}`);
+  }
+
 }

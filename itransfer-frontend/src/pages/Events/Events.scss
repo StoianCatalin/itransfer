@@ -1,31 +1,4 @@
-.spaces-container {
+.events-container {
   width: 100%;
   padding: 20px;
-  .row {
-    display: flex;
-    flex-flow: row wrap;
-    .room {
-      background-color: #1d1d91;
-      border: 1px solid #fff;
-      min-height: 50px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-      cursor: pointer;
-      transition: all ease 0.3s;
-      &:hover {
-        font-size: 18px;
-      }
-      &.large {
-        flex-grow: 3;
-      }
-      &.medium {
-        flex-grow: 2;
-      }
-      &.small {
-        flex-grow: 1;
-      }
-    }
-  }
 }

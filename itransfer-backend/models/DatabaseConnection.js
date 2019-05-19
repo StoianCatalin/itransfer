@@ -7,6 +7,8 @@ const PaymentModel = require('./Payment.model');
 const RoomModel = require('./Room.model');
 const MeetingModel = require('./Meeting.model');
 const OfficeModel = require('./Office.model');
+const EventModel = require('./Event.model');
+const AttenderModel = require('./Attender.model');
 
 const sequelize = new Sequelize('itransfer', 'root', 'root', {
   host: 'itransfer-mysql',
@@ -27,6 +29,8 @@ const Payment = PaymentModel(sequelize, Sequelize);
 const Room = RoomModel(sequelize, Sequelize);
 const Meeting = MeetingModel(sequelize, Sequelize);
 const Office = OfficeModel(sequelize, Sequelize);
+const Event = EventModel(sequelize, Sequelize);
+const Attender = AttenderModel(sequelize, Sequelize);
 
 Plan.hasMany(Facility);
 User.hasMany(Member);
@@ -38,6 +42,8 @@ Office.belongsTo(User);
 Meeting.belongsTo(Room);
 Payment.belongsTo(Plan);
 Payment.belongsTo(User);
+Attender.belongsTo(User);
+Attender.belongsTo(Event);
 
 module.exports = {
   sequelize,
@@ -49,4 +55,6 @@ module.exports = {
   Room,
   Meeting,
   Office,
+  Event,
+  Attender
 };

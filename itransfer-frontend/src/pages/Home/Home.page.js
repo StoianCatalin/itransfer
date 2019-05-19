@@ -153,6 +153,7 @@ class HomePage extends Component {
         classNameInput="user-edit-input"
         id={`nameOfMember${index}`}
         name={`nameOfMember${index}`}
+        disabled={ this.state.account.role !== 3 }
         type="text"
         value={this.state.form.team[index].full_name}
         validate={true}
@@ -221,6 +222,7 @@ class HomePage extends Component {
       <div className="office-dropdown">
         <FormControl className="select-room">
           <Select
+            disabled={ this.state.account.role !== 3 }
             value={this.state.form.office.office_id}
             onChange={this.handleChangeOffice}
             inputProps={{
@@ -246,6 +248,7 @@ class HomePage extends Component {
           id={'full_name'}
           name={'full_name'}
           type="text"
+          disabled={ this.state.account.role !== 3 }
           value={this.state.form.full_name}
           validate={true}
           onChange={(full_name) => { this.setState({ form: { ...this.state.form, full_name } }); }}
@@ -262,6 +265,7 @@ class HomePage extends Component {
         <Textbox
           classNameInput="user-edit-input"
           id={'cnp'}
+          disabled={ this.state.account.role !== 3 }
           name={'cnp'}
           type="number"
           value={this.state.form.cnp}
@@ -281,6 +285,7 @@ class HomePage extends Component {
           classNameInput="user-edit-input"
           id={'identity_number'}
           name={'identity_number'}
+          disabled={ this.state.account.role !== 3 }
           type="text"
           value={this.state.form.identity_number}
           validate={true}
@@ -299,6 +304,7 @@ class HomePage extends Component {
           classNameInput="user-edit-input"
           id={'address'}
           name={'address'}
+          disabled={ this.state.account.role !== 3 }
           type="text"
           value={this.state.form.address}
           validate={true}
@@ -317,6 +323,7 @@ class HomePage extends Component {
           id={'email'}
           name={'email'}
           type="text"
+          disabled={ this.state.account.role !== 3 }
           value={this.state.form.email}
           validate={true}
           onChange={(email) => { this.setState({ form: { ...this.state.form, email } }); }}
@@ -365,7 +372,7 @@ class HomePage extends Component {
                 </CardContent>
                 <CardActions>
                   <Button size="small" onClick={() => { this.handleOpenEditUserDialog(user); }}>Manage</Button>
-                  <Button size="small" onClick={() => { this.handleOpenDeleteUserDialog(user); }}>Delete</Button>
+                  <Button disabled={ this.state.account.role !== 3 } size="small" onClick={() => { this.handleOpenDeleteUserDialog(user); }}>Delete</Button>
                 </CardActions>
               </Card>
             );

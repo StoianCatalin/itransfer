@@ -32,6 +32,10 @@ class DashboardLayout extends Component {
     switch (this.props.role) {
       case 3:
         return <AdminDashboard />;
+      case 2:
+        return <AdminDashboard />;
+      case 1:
+        return <AdminDashboard />;
       case 0:
         return <UserDashboard />;
       default:

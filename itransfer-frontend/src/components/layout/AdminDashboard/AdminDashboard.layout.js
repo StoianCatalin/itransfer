@@ -51,16 +51,16 @@ class AdminDashboardLayout extends Component {
                 textColor="primary"
                 variant="fullWidth"
               >
-                <Tab value="/dashboard" label="Dashboard" onClick={() => {this.navigate("/dashboard")}} />
-                <Tab value="/users" label="Staff" onClick={() => {this.navigate("/users")}} />
-                <Tab value="/payments" label="Payments" onClick={() => {this.navigate("/payments")}} />
-                <Tab value="/events" label="Events" onClick={() => {this.navigate("/events")}} />
+                <Tab disabled={this.props.account.role === 1} value="/dashboard" label="Dashboard" onClick={() => {this.navigate("/dashboard")}} />
+                <Tab disabled={this.props.account.role !== 3} value="/users" label="Staff" onClick={() => {this.navigate("/users")}} />
+                <Tab disabled={this.props.account.role === 2} value="/payments" label="Payments" onClick={() => {this.navigate("/payments")}} />
+                <Tab disabled={this.props.account.role === 1} value="/events" label="Events" onClick={() => {this.navigate("/events")}} />
               </Tabs>
               <div className="page">
-                <PrivateRoute path="(/|/dashboard)/" component={HomePage}/>
-                <PrivateRoute exact path="/users" component={UsersPage}/>
-                <PrivateRoute path="/payments" component={PaymentsPage}/>
-                <PrivateRoute path="/events" component={EventsPage}/>
+                { this.props.account.role !== 1 && <PrivateRoute path={ this.props.account.role !== 1 ? "(/|/dashboard)/" : "/dashboard" } component={HomePage}/> }
+                { this.props.account.role === 3 && <PrivateRoute exact path="/users" component={UsersPage}/> }
+                { this.props.account.role !== 2 && <PrivateRoute path={ this.props.account.role === 1 ? "(/|/payments)/" : "/payments" } component={PaymentsPage}/> }
+                { this.props.account.role !== 1 && <PrivateRoute path="/events" component={EventsPage}/> }
                 <PrivateRoute path="/profile" component={ProfilePage}/>
               </div>
             </div>
@@ -73,7 +73,7 @@ class AdminDashboardLayout extends Component {
 
 const mapStateToProps = state => {
   return {
-
+    account: { ...state.user, members: null },
   }
 };
 

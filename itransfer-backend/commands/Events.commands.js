@@ -1,10 +1,35 @@
 const { google } = require('googleapis');
 const privatekey = require("../privatekey.json");
-const { Meeting, Room } = require('../models/DatabaseConnection');
+const { Meeting, Room, Event } = require('../models/DatabaseConnection');
 
 class EventsCommands {
 
   constructor() {}
+
+  async addEvent(payload) {
+    try {
+      await Event.create(payload);
+      return { status: 200, body: { message: 'Event created.' } };
+    } catch (e) {
+      return { status: 400, body: { message: 'Missing params' } };
+    }
+  }
+
+  async editEvent(payload) {
+    const event = await Event.findOne({ where: { id: payload.id }});
+    if (!event) {
+      return { status: 400, body: { message: 'Event do not exist' } };
+    }
+    event.name = payload.name;
+    event.location = payload.location;
+    event.price = payload.price;
+    event.startDate = payload.startDate;
+    event.startTime = payload.startTime;
+    event.endDate = payload.endDate;
+    event.endTime = payload.endTime;
+    await event.save();
+    return { status: 200, body: { message: 'Event edited' } };
+  }
 
   addMeetings(meetingBody, user) {
     console.log(meetingBody);

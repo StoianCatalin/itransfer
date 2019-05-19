@@ -1,7 +1,8 @@
 const CoreRouter = require('koa-router');
 const isAuthenticated = require('../middlewares/authentication.middleware').isAuthenticated;
 const { EventsCommands } = require('../commands/Events.commands');
-const { Meeting, Room, Office, User } = require('../models/DatabaseConnection');
+const { Meeting, Room, Office, User, Attender, Event } = require('../models/DatabaseConnection');
+const { hasSecretarAccess } = require('../middlewares/role.middleware');
 
 const router = new CoreRouter();
 router.get('/rooms',async (ctx, next) => {
@@ -51,6 +52,51 @@ router.delete('/meeting/:id', isAuthenticated, async (ctx, next) => {
   const eventsCommands = new EventsCommands();
   const response = await eventsCommands.deleteMeeting(ctx.params.id, ctx.state.user);
   ctx.response.body = response;
+});
+
+router.get('/events', isAuthenticated, async (ctx, next) => {
+  const events = await Event.findAll({ raw: true });
+  for (const event of events) {
+    event.attenders = await Attender.findAll({ where: { eventId: event.id }, raw: true });
+  }
+  ctx.response.body = events;
+  await next();
+});
+
+router.post('/events', isAuthenticated, hasSecretarAccess, async (ctx, next) => {
+  const eventsCommands = new EventsCommands();
+  const { status, body } = await eventsCommands.addEvent(ctx.request.body);
+  ctx.response.status = status;
+  ctx.response.body = body;
+  await next();
+});
+
+router.put('/events', isAuthenticated, hasSecretarAccess, async (ctx, next) => {
+  const eventsCommands = new EventsCommands();
+  const { status, body } = await eventsCommands.editEvent(ctx.request.body);
+  ctx.response.status = status;
+  ctx.response.body = body;
+  await next();
+});
+
+router.delete('/events/:id', isAuthenticated, hasSecretarAccess, async (ctx, next) => {
+  await Event.destroy({ where: { id: ctx.params.id }});
+  await Attender.destroy({ where: { eventId: ctx.params.id } });
+  ctx.response.status = 200;
+  ctx.response.body = { message: 'Event deleted' };
+});
+
+router.post('/events/signup/:eventId', isAuthenticated, async  (ctx, next) => {
+  const userId = ctx.state.user.id;
+  const eventId = ctx.params.eventId;
+  const event = await Event.findOne({ where: { id: eventId } });
+  if (!event) {
+    ctx.response.status = 400;
+    ctx.response.body = { message: 'Event does not exist' };
+  }
+  await Attender.create({ userId, eventId });
+  ctx.response.status = 200;
+  ctx.response.body = { message: 'You were sign-up successfully to this event!' };
 });
 
 module.exports = { router };
