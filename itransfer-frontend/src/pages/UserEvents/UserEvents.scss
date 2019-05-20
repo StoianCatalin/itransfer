@@ -1,0 +1,14 @@
+.meetings-container {
+  width: 100%;
+  padding: 20px;
+  .meetings-header {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+input[type=text].meetings-input {
+  margin: 10px 0 !important;
+}
+.select-room {
+  width: 50%;
+}

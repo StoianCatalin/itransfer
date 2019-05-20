@@ -140,6 +140,9 @@ class EventsPage extends Component {
           this.props.openSnackbar(response.data.message);
           this.closeEditEventModal();
           this.fetchEvents();
+          setTimeout(() => {
+            this.props.closeSnackbar();
+          }, 3000);
         });
       }
     }
@@ -150,7 +153,7 @@ class EventsPage extends Component {
     return (
       <div className="events-container">
         <div className="add-button-container">
-          <Button variant="contained" color="primary" onClick={ () => { this.openEditEventModal({ role: 1 }) } }>
+          <Button variant="contained" color="primary" onClick={ () => { this.openEditEventModal({}) } }>
             Create
           </Button>
         </div>

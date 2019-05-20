@@ -63,6 +63,18 @@ router.get('/events', isAuthenticated, async (ctx, next) => {
   await next();
 });
 
+router.get('/events/user', isAuthenticated, async (ctx, next) => {
+  const events = await Event.findAll({ raw: true }).filter((event) => {
+    const startDate = new Date(`${event.startDate} ${event.startTime}`).getTime();
+    return startDate >= new Date().getTime();
+  });
+  for (const event of events) {
+    event.attenders = await Attender.findAll({ where: { eventId: event.id }, raw: true });
+  }
+  ctx.response.body = events;
+  await next();
+});
+
 router.post('/events', isAuthenticated, hasSecretarAccess, async (ctx, next) => {
   const eventsCommands = new EventsCommands();
   const { status, body } = await eventsCommands.addEvent(ctx.request.body);
@@ -89,11 +101,20 @@ router.delete('/events/:id', isAuthenticated, hasSecretarAccess, async (ctx, nex
 router.post('/events/signup/:eventId', isAuthenticated, async  (ctx, next) => {
   const userId = ctx.state.user.id;
   const eventId = ctx.params.eventId;
-  const event = await Event.findOne({ where: { id: eventId } });
+  const event = await Event.findOne({ include: [Attender], where: { id: eventId } });
+  const user = await User.findOne({ where: { id: userId } });
   if (!event) {
     ctx.response.status = 400;
     ctx.response.body = { message: 'Event does not exist' };
   }
+  for (const attender of event.attenders) {
+    if (attender.userId === user.id) {
+      ctx.response.body = { message: 'You are already registered to this event.' }
+      return;
+    }
+  }
+  const eventCommands = new EventsCommands();
+  await eventCommands.addEventInCalendar(event, user);
   await Attender.create({ userId, eventId });
   ctx.response.status = 200;
   ctx.response.body = { message: 'You were sign-up successfully to this event!' };

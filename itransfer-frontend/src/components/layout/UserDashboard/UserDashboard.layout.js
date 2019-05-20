@@ -6,6 +6,7 @@ import PrivateRoute from "../../../common/PrivateRoute";
 import UserHomePage from "../../../pages/UserHome/UserHome.page";
 import {connect} from "react-redux";
 import MeetingsPage from '../../../pages/Meetings/Meetings.page';
+import UserEventsPage from '../../../pages/UserEvents/UserEvents.page';
 import ProfilePage from '../../../pages/Profile/Profile.page';
 import Header from '../../header/Header.component';
 
@@ -49,10 +50,12 @@ class UserDashboardLayout extends Component {
               >
                 <Tab value="/dashboard" label="Home" onClick={() => {this.navigate("/dashboard")}} />
                 <Tab value="/meetings" label="Meetings" onClick={() => {this.navigate("/meetings")}} />
+                <Tab value="/events" label="Events" onClick={() => {this.navigate("/events")}} />
               </Tabs>
               <div className="page">
                 <PrivateRoute path="(/|/dashboard)/" component={UserHomePage}/>
                 <PrivateRoute path="/meetings" component={MeetingsPage}/>
+                <PrivateRoute path="/events" component={UserEventsPage}/>
                 <PrivateRoute path="/profile" component={ProfilePage}/>
               </div>
             </div>

@@ -32,7 +32,6 @@ class EventsCommands {
   }
 
   addMeetings(meetingBody, user) {
-    console.log(meetingBody);
     return new Promise(async (resolve) => {
       const meetings = await Meeting.findAll({
         where: { roomId: meetingBody.roomId },
@@ -108,9 +107,68 @@ class EventsCommands {
               resolve({ status: 409, message: 'An error occurred. Please contact administrator.' });
               return;
             }
-            console.log(event.data.id);
             meeting.gcalendar_meeting_id = event.data.id;
             await meeting.save();
+            resolve({ status: 200, message: 'Event was added in calendar.' });
+          })
+        }
+      });
+    });
+  }
+
+  addEventInCalendar(event, user) {
+    return new Promise(async (resolve, reject) => {
+      const startDate = new Date(event.startDate + " " + event.startTime);
+      const startHours = startDate.getHours();
+      const startMinutes = startDate.getMinutes();
+
+      const endDate = new Date(event.startDate + " " + event.startTime);
+      const endHours = endDate.getHours();
+      const endMinutes = endDate.getMinutes();
+
+      let jwtClient = new google.auth.JWT(
+        privatekey.client_email,
+        null,
+        privatekey.private_key,
+        [
+          'https://www.googleapis.com/auth/calendar',
+        ]);
+      jwtClient.authorize(function (err, tokens) {
+        if (err) {
+          console.log(err);
+        } else {
+          const calendar = google.calendar('v3');
+          const eventPayload = {
+            'summary': event.name,
+            'location': event.location,
+            'description': '',
+            'start': {
+              'dateTime': `${startDate.toISOString().split("T")[0]}T${startHours}:${startMinutes}:00+03:00`,
+              'timeZone': 'Europe/Bucharest',
+            },
+            'end': {
+              'dateTime': `${endDate.toISOString().split("T")[0]}T${endHours}:${endMinutes}:00+03:00`,
+              'timeZone': 'Europe/Bucharest',
+            },
+            'attendees': [{ email: user.email }],
+            'reminders': {
+              'useDefault': false,
+              'overrides': [
+                {'method': 'email', 'minutes': 10},
+                {'method': 'popup', 'minutes': 10},
+              ],
+            },
+          };
+          calendar.events.insert({
+            auth: jwtClient,
+            calendarId: 'itransfer.noreply@gmail.com',
+            resource: eventPayload
+          }, async (err, ev) => {
+            if (err) {
+              console.log(err);
+              resolve({ status: 409, message: 'An error occurred. Please contact administrator.' });
+              return;
+            }
             resolve({ status: 200, message: 'Event was added in calendar.' });
           })
         }

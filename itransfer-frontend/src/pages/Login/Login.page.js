@@ -87,6 +87,9 @@ class LoginPage extends Component {
                 this.state.email = { value: '', touched: false };
                 this.state.password = { value: '', touched: false };
             }
+            setTimeout(() => {
+                this.props.closeSnackbar();
+            }, 3000);
             this.setState({
                 email: { value: '', touched: false },
                 password: { value: '', touched: false }

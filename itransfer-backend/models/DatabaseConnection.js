@@ -44,6 +44,7 @@ Payment.belongsTo(Plan);
 Payment.belongsTo(User);
 Attender.belongsTo(User);
 Attender.belongsTo(Event);
+Event.hasMany(Attender);
 
 module.exports = {
   sequelize,

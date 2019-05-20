@@ -226,9 +226,6 @@ class MeetingsPage extends Component {
             }) }
           </TableBody>
         </Table>
-        <h4>Upcoming events</h4>
-        <p>TO BE DISCUSSED</p>
-
         <Dialog open={this.state.open} onClose={this.handleClickClose} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">Create meeting</DialogTitle>
           <DialogContent>

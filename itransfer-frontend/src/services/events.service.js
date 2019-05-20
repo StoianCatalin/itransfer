@@ -31,6 +31,10 @@ export default class EventsService {
     return axios.get(`${this.baseUrl}/events`);
   }
 
+  getEventsUser() {
+    return axios.get(`${this.baseUrl}/events/user`);
+  }
+
   createEvent(payload) {
     return axios.post(`${this.baseUrl}/events`, payload);
   }
