@@ -1,0 +1,54 @@
+.guard-page {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: #1d1d91;
+  background-image: url("../../assets/background.png");
+  background-repeat: repeat;
+  .container {
+    margin: auto;
+    margin-top: 30px;
+    width: 90%;
+    max-width: 800px;
+    height: 450px;
+    display: flex;
+    flex-direction: row;
+    p {
+      text-align: center;
+      width: 100%;
+    }
+  }
+  .user-info {
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    span {
+      font-weight: normal;
+    }
+  }
+  .qrcode-container {
+    width: 90% !important;
+    display: flex;
+    justify-content: center;
+  }
+  .team-mem {
+    font-weight: normal;
+  }
+}
+
+@media (max-width: 677px) {
+  .login-page {
+    .container {
+      .left-side {
+        display: none;
+      }
+      .right-side {
+        width: 100%;
+      }
+    }
+  }
+}

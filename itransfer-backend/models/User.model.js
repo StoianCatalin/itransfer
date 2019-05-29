@@ -38,10 +38,25 @@ module.exports = (sequelize, type) => {
     startDate: {
       type: Sequelize.BIGINT,
     },
+    endDate: {
+      type: Sequelize.BIGINT,
+    },
     contractUrl: {
       type: Sequelize.STRING,
       allowNull: true,
-    }
+    },
+    profile: {
+      type: Sequelize.STRING,
+    },
+    freeAccount: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+    },
+    freeAccountObservation: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+
   })
 };
 

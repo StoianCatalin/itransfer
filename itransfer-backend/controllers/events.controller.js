@@ -23,9 +23,9 @@ router.get('/offices',async (ctx, next) => {
   for (const office of offices) {
     if (office.userId) {
       const user = await User.findOne({ where: { id: office.userId } });
-      office.busy = !!user.contractUrl;
+      office.busy = !!user.contractUrl ? 2 : 1;
     } else {
-      office.busy = false
+      office.busy = 0
     }
   }
   ctx.response.body = offices;

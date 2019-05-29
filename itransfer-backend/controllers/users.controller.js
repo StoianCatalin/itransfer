@@ -1,7 +1,7 @@
 const CoreRouter = require('koa-router');
 const isAuthenticated = require('../middlewares/authentication.middleware').isAuthenticated;
 const { UserCommands } = require('../commands/User.commands');
-const {User, Payment} = require('../models/DatabaseConnection');
+const {User, Payment, Office, Member} = require('../models/DatabaseConnection');
 const { hasAdminAccess, hasSecretarAccess } = require('../middlewares/role.middleware');
 const koaBody = require("koa-body");
 const Op = require('sequelize').Op;
@@ -157,6 +157,30 @@ router.put('/staff/:userId', isAuthenticated, hasAdminAccess, async (ctx, next) 
   const response = await userCommands.saveStaff(ctx.request.body);
   ctx.response.status = response.status;
   ctx.response.body = response.body;
+  await next();
+});
+
+router.get('/guard/:id', async (ctx, next) => {
+  const user = await User.findOne({ include: [Office, Payment, Member], where: { id: ctx.params.id } });
+  if (!user) {
+    ctx.response.status = 400;
+    ctx.response.body = { message: 'User not exists' };
+  }
+  const unpaidPayment = user.payments.find((payment) => payment.status === 'unpaid');
+  user.password = null;
+  user.paymentStatus = unpaidPayment ? 'Unpaid' : 'Paid';
+  user.status = user.contractUrl ? 'Active' : 'Not active';
+  ctx.response.body = {
+    id: user.id,
+    last_date: unpaidPayment ? unpaidPayment.startDate + 1296000000 : null,
+    full_name: user.full_name,
+    email: user.email,
+    officeName: user.office.name,
+    officeId: user.office.id,
+    paymentStatus: user.payments.find((payment) => payment.status === 'unpaid') ? 'Unpaid' : 'Paid',
+    status: user.contractUrl ? 'Active' : 'Not active',
+    members: user.members.map((member) => { return { name: member.full_name, email: member.email } })
+  };
   await next();
 });
 

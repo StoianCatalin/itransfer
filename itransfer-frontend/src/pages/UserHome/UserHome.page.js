@@ -17,6 +17,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import QRCode from 'qrcode.react';
 import Radio from '@material-ui/core/Radio';
 import { FilePond, registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
@@ -88,6 +89,12 @@ class UserHomePage extends Component {
     });
   };
 
+  handleChangePayMethod = (method) => {
+    this.setState({
+      paymentInfo: { method }
+    });
+  };
+
   submitCardPayment() {
     const { number, name, expiry, cvc } = this.state.card;
     if (number && name && expiry && cvc) {
@@ -97,6 +104,30 @@ class UserHomePage extends Component {
         });
       });
     }
+  }
+
+  receiptMethodRender() {
+    return (
+      <div className="method-container">
+        <FilePond
+          acceptedFileTypes={['image/*']}
+          server={
+          {
+            url: `http://localhost:3001/payments/upload/${this.state.paymentSelected.id}`,
+            process: {
+              headers: {
+                'authorization': `Bearer ${this.state.user.token}`
+              }
+            },
+            revert: {
+              headers: {
+                'authorization': `Bearer ${this.state.user.token}`
+              }
+            },
+          }
+        }/>
+      </div>
+    );
   }
 
   setFocusedField(fieldName) {
@@ -200,7 +231,10 @@ class UserHomePage extends Component {
         <h2 className="header">Dashboard</h2>
         <Divider />
         <br />
-        { this.state.user.contractUrl && (<span className="download-contract" onClick={() => { this.downloadContract(this.state.user.contractUrl); }}>Download contract</span>) }
+        <div className="user-contract-container">
+          { this.state.user.contractUrl && (<span className="download-contract" onClick={() => { this.downloadContract(this.state.user.contractUrl); }}>Download contract</span>) }
+          <QRCode className="user-qrcode" value={`{"userId": "${this.state.user.id}"}`} />
+        </div>
         <h4>Team members</h4>
         <Table>
           <TableHead>
@@ -270,8 +304,8 @@ class UserHomePage extends Component {
               <TableCell>Subscription plan</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Date</TableCell>
-              <TableCell>Bill</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell className="responsive-column">Bill</TableCell>
+              <TableCell className="responsive-column">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -283,11 +317,11 @@ class UserHomePage extends Component {
                   </TableCell>
                   <TableCell><span className={"status " + payment.status}>{ payment.status }</span></TableCell>
                   <TableCell>{ new Date(payment.startDate).toLocaleString('en-us', { day: '2-digit', month: 'long', year: 'numeric' }) }</TableCell>
-                  <TableCell>
+                  <TableCell className="responsive-column">
                     { payment.recipeUrl && payment.payedMethod !== 'Card' &&
                     (<span className="download-contract" onClick={() => { this.downloadRecipe(payment.recipeUrl); }}>Download bill</span>) || '-' }
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="responsive-column">
                     <Button variant="contained" color="primary" disabled={payment.status !== 'unpaid'} onClick={() => { this.openPaymentModal(payment); }}>
                       Pay
                     </Button>
@@ -304,18 +338,36 @@ class UserHomePage extends Component {
         >
           <DialogTitle id="form-dialog-title">Payment</DialogTitle>
           <DialogContent>
+            <div className="choose-method" onClick={() => { this.handleChangePayMethod(1) }}>
+              <Radio checked={this.state.paymentInfo.method === 1} value="1" />
+              Upload bank receipt
+            </div>
+            <div className="choose-method" onClick={() => { this.handleChangePayMethod(2) }}>
+              <Radio checked={this.state.paymentInfo.method === 2} value="2" />
+              Credit card
+            </div>
             <DialogContentText>
-              You can pay your subscription with a debit card. If you do this, then your payment will be processed in maximum 24 hours.
+              If you choose to pay via bank receipt, your submission must be checked by our team. Also meke sure you upload a readable photo/scan.
             </DialogContentText>
-            {this.creditCardMethodRender()}
+            { this.state.paymentInfo.method === 1 && this.receiptMethodRender() }
+            { this.state.paymentInfo.method === 2 && this.creditCardMethodRender() }
           </DialogContent>
           <DialogActions>
-            <Button variant="contained" color="primary" disabled={!(number && name && expiry && cvc)} onClick={() => { this.submitCardPayment() }}>
-              Pay
-            </Button>,
-            <Button onClick={this.handleClosePaymentModal} color="primary">
-              Cancel
-            </Button>
+            { this.state.paymentInfo.method === 1 && (
+              <Button onClick={this.handleClosePaymentModal} color="primary">
+                Done
+              </Button>
+            ) }
+            { this.state.paymentInfo.method === 2 && (
+              [
+                <Button variant="contained" color="primary" disabled={!(number && name && expiry && cvc)} onClick={() => { this.submitCardPayment() }}>
+                  Pay
+                </Button>,
+                <Button onClick={this.handleClosePaymentModal} color="primary">
+                Cancel
+                </Button>
+              ]
+            ) }
           </DialogActions>
         </Dialog>
       </div>

@@ -44,6 +44,7 @@ class HomePage extends Component {
         identity_number: '',
         address: '',
         email: '',
+        profile: '',
         team: [],
       },
       formValidation: {
@@ -52,6 +53,7 @@ class HomePage extends Component {
         identity_number: false,
         address: false,
         email: false,
+        profile: false,
       },
     };
 
@@ -343,6 +345,24 @@ class HomePage extends Component {
               }
             }
           }}
+        />
+        <Textbox
+          id={'profile'}
+          name={'profile'}
+          type="text"
+          disabled={ this.state.account.role !== 3 }
+          value={this.state.form.profile}
+          validate={true}
+          onChange={(profile) => { this.setState({ form: { ...this.state.form, profile } }); }}
+          placeholder="Profile"
+          validationCallback={profile => { this.setState({ formValidation: { ...this.state.formValidation, profile } }) } }
+          onBlur={() => {}}
+          validationOption={{
+            name: 'Profile',
+            check: true,
+            required: true
+          }}
+          classNameInput="user-edit-input"
         />
       </div>
     );

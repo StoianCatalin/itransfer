@@ -14,6 +14,9 @@ const Office = (sequelize, type) => {
       type: Sequelize.STRING,
       allowNull: false
     },
+    capacity: {
+      type: Sequelize.INTEGER,
+    },
   });
 };
 

@@ -47,4 +47,8 @@ export default class UserService {
     return axios.post(`${this.baseUrl}/staff`, user);
   }
 
+  guardCheckUser(userId) {
+    return axios.get(`${this.baseUrl}/guard/${userId}`);
+  }
+
 }

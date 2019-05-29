@@ -21,6 +21,9 @@ import PlansService from "../../services/plans.service";
 import DateFnsUtils from '@date-io/date-fns';
 import AuthService from "../../services/auth.service";
 import EventsService from "../../services/events.service";
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
 
 function getSteps() {
   return ['Select your profile', 'Choose your subscription plan', 'Complete with your personal data', 'Choose your office'];
@@ -39,6 +42,7 @@ class RegisterPage extends Component {
       plans: [],
       loading: false,
       offices: [],
+      profileValue: '',
       form: {
         name: '',
         cnp: '',
@@ -46,6 +50,7 @@ class RegisterPage extends Component {
         address: '',
         email: '',
         password: '',
+        profile: 'Industry specialist',
         team: [],
       },
       formValidation: {
@@ -74,6 +79,12 @@ class RegisterPage extends Component {
       }
     });
   }
+
+  handleChangeProfile = (event) => {
+    this.setState({
+      form: { ...this.state.form, profile: event.target.value }
+    })
+  };
 
   handleNext = () => {
     if (this.state.activeStep === 0) {
@@ -149,6 +160,7 @@ class RegisterPage extends Component {
           full_name: this.state.form.name,
           office_id: this.state.selectedOffice,
           ...this.state.form,
+          profile: this.state.form.profile === 'Other' ? this.state.profileValue : this.state.form.profile,
         }, { planId: this.state.selectedPlan, startDate: new Date(this.state.startDate).getTime() });
         if (response.status === 200) {
           this.props.openSnackbar(response.data.message);
@@ -226,7 +238,7 @@ class RegisterPage extends Component {
     const elements = [];
     for (let index = 0; index <= this.state.form.team.length; index++) {
       elements.push(<Textbox
-        classNameInputs="register-input"
+        classNameInput="register-input"
         id={`nameOfMember${index}`}
         name={`nameOfMember${index}`}
         type="text"
@@ -364,6 +376,38 @@ class RegisterPage extends Component {
             min: 6
           }}
         />
+        <br />
+        <InputLabel className="salect-profile" htmlFor="profile-simple">Profile</InputLabel>
+        <Select
+          value={this.state.form.profile}
+          onChange={this.handleChangeProfile}
+          inputProps={{
+            name: 'profile',
+            id: 'profile-simple',
+          }}
+        >
+          <MenuItem value={'Industry specialist'}>Industry specialist</MenuItem>
+          <MenuItem value={'Researcher / Teacher'}>Researcher / Teacher</MenuItem>
+          <MenuItem value={'Student'}>Student</MenuItem>
+          <MenuItem value={'Other'}>Other</MenuItem>
+        </Select>
+        { this.state.form.profile === 'Other' &&
+        <Textbox
+          classNameInput="register-input profile-input"
+          id={'profile'}
+          name={'profile'}
+          type="text"
+          value={this.state.profileValue}
+          validate={true}
+          onChange={(profileValue) => { this.setState({ profileValue }); }}
+          placeholder="Your profile"
+          validationCallback={profile => {} }
+          onBlur={() => {}}
+          validationOption={{
+            name: 'Profile',
+            check: true,
+          }}
+        />}
         { this.hasMoreMembersInTeam && <div className="team-members">
           <h4>Team Members</h4>
           { this.generateTeamMembersFields() }
@@ -388,7 +432,10 @@ class RegisterPage extends Component {
 
   getOfficeClass(id) {
     const office = this.getOffice(id);
-    if (office && office.busy) {
+    if (office && office.busy === 1) {
+      return ' reserved';
+    }
+    if (office && office.busy === 2) {
       return ' busy';
     }
     if (office && this.state.selectedOffice === office.office_id) {
@@ -413,6 +460,9 @@ class RegisterPage extends Component {
       <div className="legend">
         <div className="item">
           Taken <div className="taken" />
+        </div>
+        <div className="item">
+          Reserved <div className="reserved" />
         </div>
         <div className="item">
           Selected <div className="selected" />

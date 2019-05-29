@@ -35,3 +35,17 @@ input.card-input {
 .method-container {
   margin-top: 20px;
 }
+.user-contract-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.user-qrcode {
+
+}
+@media(max-width:500px){
+  .responsive-column {
+    display: none !important;
+  }
+}

@@ -133,6 +133,9 @@
       &.selected {
         background-color: #db8036;
       }
+      &.reserved {
+        background-color: #42c2f4;
+      }
     }
     .hall {
       width: 100%;
@@ -150,7 +153,7 @@
       justify-content: flex-end;
       margin: 5px 0;
     }
-    .taken, .selected, .free {
+    .taken, .selected, .free, .reserved {
       display: inline-block;
       width: 20px;
       height: 20px;
@@ -162,8 +165,17 @@
     .selected {
       background-color: #db8036;
     }
+    .reserved {
+      background-color: #42c2f4;
+    }
     .free {
       border: 1px solid #d5e1ed;
     }
+  }
+  .salect-profile {
+    margin-right: 30px;
+  }
+  .profile-input {
+    margin-top: 20px;
   }
 }

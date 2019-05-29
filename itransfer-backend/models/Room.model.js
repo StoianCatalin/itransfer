@@ -11,6 +11,10 @@ const Room = (sequelize, type) => {
       type: Sequelize.STRING,
       allowNull: false
     },
+    emails: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    }
   })
 };
 
