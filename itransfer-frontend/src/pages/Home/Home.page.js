@@ -15,14 +15,16 @@ import UserService from "../../services/user.service";
 import {FilePond} from "react-filepond";
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
 import EventsService from "../../services/events.service";
 import IconButton from "@material-ui/core/IconButton";
 import Snackbar from "@material-ui/core/Snackbar";
 import {closeSnackbar, openSnackbar} from "../../actions/snackbar";
 import CloseIcon from '@material-ui/icons/Close';
+import SearchIcon from '@material-ui/icons/Search';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import TextField from '@material-ui/core/TextField';
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 
 
@@ -36,8 +38,10 @@ class HomePage extends Component {
       offices: [],
       openEditUserDialog: false,
       openDeleteUserDialog: false,
+      search: '',
       selectedUser: {},
       users: [],
+      originalUsers: [],
       form: {
         full_name: '',
         cnp: '',
@@ -45,6 +49,9 @@ class HomePage extends Component {
         address: '',
         email: '',
         profile: '',
+        freeAccount: false,
+        endDatePeriod: 0,
+        freeAccountObservation: '',
         team: [],
       },
       formValidation: {
@@ -79,6 +86,7 @@ class HomePage extends Component {
       if (response.status === 200) {
         this.setState({
           users: response.data,
+          originalUsers: response.data,
         });
       }
     });
@@ -123,12 +131,6 @@ class HomePage extends Component {
     });
   };
 
-  handleChangeOffice = (event) => {
-    this.setState({
-      form: { ...this.state.form, office: this.state.offices.find((office) => office.office_id === event.target.value) }
-    });
-  };
-
   submit = () => {
     let isInvalid = false;
     for (const prop of Object.getOwnPropertyNames(this.state.formValidation)) {
@@ -138,8 +140,12 @@ class HomePage extends Component {
       this.userService.saveUser(this.state.form).then((response) => {
         if (response.status === 200) {
           this.props.openSnackbar(response.data.message);
+          setTimeout(() => {
+            this.props.closeSnackbar();
+          }, 3000);
         }
         this.fetchUsers();
+        this.fetchOffices();
         this.handleCloseEditUserDialog();
       });
     }
@@ -212,9 +218,55 @@ class HomePage extends Component {
               },
             }
           }/>
+          <h4>The contract expire in:</h4>
+        <Textbox
+          classNameInput="register-input"
+          id={'endDatePeriod'}
+          name={'endDatePeriod'}
+          type="number"
+          value={this.state.form.endDatePeriod}
+          validate={true}
+          onChange={(endDatePeriod) => { this.setState({ form: { ...this.state.form, endDatePeriod } }); }}
+          placeholder="Number of months"
+          validationCallback={endDatePeriod => { this.setState({ formValidation: { ...this.state.formValidation, endDatePeriod } }) } }
+          onBlur={() => {}}
+          validationOption={{
+            name: 'ID',
+            check: true,
+            required: false,
+          }}
+        />
       </div>
     );
   }
+
+  getOffice(id) {
+    return this.state.offices.find((office) => office.id === id);
+  }
+
+  getOfficeClass(id) {
+    const office = this.getOffice(id);
+    if (office && this.state.form.office && this.state.form.office.id === office.office_id) {
+      return ' selected';
+    }
+    if (office && this.state.selectedUser.office && office.busy === 1 && office.id !== this.state.selectedUser.office.id) {
+      return ' reserved';
+    }
+    if (office && this.state.selectedUser.office && office.busy === 2 && office.id !== this.state.selectedUser.office.id) {
+      return ' busy';
+    }
+    return '';
+  }
+
+  handleChangeOffice = (officeId) => {
+    const office = this.getOffice(officeId);
+    if (office && office.busy && this.state.selectedUser.office && office.id !== this.state.selectedUser.office.id) {
+      return;
+    }
+    this.setState({
+      form: { ...this.state.form, office: office }
+    });
+  };
 
   renderOfficeDropdown() {
     if (!this.state.form || !this.state.form.office ) {
@@ -222,26 +274,40 @@ class HomePage extends Component {
     }
     return (
       <div className="office-dropdown">
-        <FormControl className="select-room">
-          <Select
-            disabled={ this.state.account.role !== 3 }
-            value={this.state.form.office.office_id}
-            onChange={this.handleChangeOffice}
-            inputProps={{
-              name: 'office',
-              id: 'office-simple',
-            }}
-          >
-            { this.state.offices.map((office) => {
-              return (
-                <MenuItem value={office.office_id}>{ office.name }</MenuItem>
-              );
-            }) }
-          </Select>
-        </FormControl>
+        <div className="office-container">
+          <div className={"office" + this.getOfficeClass(1)} onClick={() => { this.handleChangeOffice(1) }}>Office</div>
+          <div className={"office" + this.getOfficeClass(2)} onClick={() => { this.handleChangeOffice(2) }}>Office</div>
+          <div className={"office" + this.getOfficeClass(3)} onClick={() => { this.handleChangeOffice(3) }}>Office</div>
+          <div className={"office" + this.getOfficeClass(4)} onClick={() => { this.handleChangeOffice(4) }}>Office</div>
+          <div className="hall" />
+          <div className={"office" + this.getOfficeClass(5)} onClick={() => { this.handleChangeOffice(5) }}>Office</div>
+          <div className={"office" + this.getOfficeClass(6)} onClick={() => { this.handleChangeOffice(6) }}>Office</div>
+          <div className={"office" + this.getOfficeClass(7)} onClick={() => { this.handleChangeOffice(7) }}>Office</div>
+          <div className={"office" + this.getOfficeClass(8)} onClick={() => { this.handleChangeOffice(8) }}>Office</div>
+        </div>
+        <div className="legend">
+          <div className="item">
+            Taken <div className="taken" />
+          </div>
+          <div className="item">
+            Reserved <div className="reserved" />
+          </div>
+          <div className="item">
+            Selected <div className="selected" />
+          </div>
+          <div className="item">
+            Free <div className="free" />
+          </div>
+        </div>
       </div>
     );
   }
+
+  handleChangeFreeAccount = (event) => {
+    this.setState({
+      form: { ...this.state.form, freeAccount: event.target.checked }
+    })
+  };
 
   getFormStep() {
     return (
@@ -250,7 +316,7 @@ class HomePage extends Component {
           id={'full_name'}
           name={'full_name'}
           type="text"
-          disabled={ this.state.account.role !== 3 }
+          disabled={ this.state.account.role < 2 }
           value={this.state.form.full_name}
           validate={true}
           onChange={(full_name) => { this.setState({ form: { ...this.state.form, full_name } }); }}
@@ -267,7 +333,7 @@ class HomePage extends Component {
         <Textbox
           classNameInput="user-edit-input"
           id={'cnp'}
-          disabled={ this.state.account.role !== 3 }
+          disabled={ this.state.account.role < 2 }
           name={'cnp'}
           type="number"
           value={this.state.form.cnp}
@@ -287,7 +353,7 @@ class HomePage extends Component {
           classNameInput="user-edit-input"
           id={'identity_number'}
           name={'identity_number'}
-          disabled={ this.state.account.role !== 3 }
+          disabled={ this.state.account.role < 2 }
           type="text"
           value={this.state.form.identity_number}
           validate={true}
@@ -306,7 +372,7 @@ class HomePage extends Component {
           classNameInput="user-edit-input"
           id={'address'}
           name={'address'}
-          disabled={ this.state.account.role !== 3 }
+          disabled={ this.state.account.role < 2 }
           type="text"
           value={this.state.form.address}
           validate={true}
@@ -325,7 +391,7 @@ class HomePage extends Component {
           id={'email'}
           name={'email'}
           type="text"
-          disabled={ this.state.account.role !== 3 }
+          disabled={ this.state.account.role < 2 }
           value={this.state.form.email}
           validate={true}
           onChange={(email) => { this.setState({ form: { ...this.state.form, email } }); }}
@@ -350,7 +416,7 @@ class HomePage extends Component {
           id={'profile'}
           name={'profile'}
           type="text"
-          disabled={ this.state.account.role !== 3 }
+          disabled={ this.state.account.role < 2  }
           value={this.state.form.profile}
           validate={true}
           onChange={(profile) => { this.setState({ form: { ...this.state.form, profile } }); }}
@@ -364,15 +430,87 @@ class HomePage extends Component {
           }}
           classNameInput="user-edit-input"
         />
+        <FormControlLabel
+          control={
+            <Checkbox checked={this.state.form.freeAccount} onChange={this.handleChangeFreeAccount} value="checkedA" />
+          }
+          label="Free account"
+        />
+        <Textbox
+          id={'freeAccountObservation'}
+          name={'freeAccountObservation'}
+          type="text"
+          disabled={ this.state.account.role < 2 }
+          value={this.state.form.freeAccountObservation}
+          validate={true}
+          onChange={(freeAccountObservation) => { this.setState({ form: { ...this.state.form, freeAccountObservation } }); }}
+          placeholder="Observations"
+          validationCallback={() => {} }
+          onBlur={() => {}}
+          validationOption={{
+            name: 'Observations',
+            check: true,
+            required: false
+          }}
+          classNameInput="user-edit-input"
+        />
       </div>
     );
   }
+
+  handleSearch = (event) => {
+    this.setState({
+      search: event.target.value,
+      users: this.state.originalUsers.filter((user) => {
+        if (event.target.value === '') {
+          return true;
+        }
+        if (user.full_name.toLowerCase().includes(event.target.value)) {
+          return true;
+        }
+        if (user.email.toLowerCase().includes(event.target.value)) {
+          return true;
+        }
+        if (user.identity_number.toLowerCase().includes(event.target.value)) {
+          return true;
+        }
+        if (user.profile.toLowerCase().includes(event.target.value)) {
+          return true;
+        }
+        if (user.address.toLowerCase().includes(event.target.value)) {
+          return true;
+        }
+        if (user.office && user.office.name.toLowerCase().includes(event.target.value)) {
+          return true;
+        }
+        if (user.cnp.toLowerCase().includes(event.target.value)) {
+          return true;
+        }
+        return false;
+      }),
+    });
+  };
 
   render() {
 
     return (
       <div className="container">
-        <h2 className="header">Dashboard</h2>
+        <div className="header-container">
+          <h2 className="header">Dashboard</h2>
+          <TextField
+            id="input-with-icon-textfield"
+            label="Search"
+            onChange={this.handleSearch}
+            value={this.state.search}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </div>
         <div className="grid three">
           { this.state.users.map((user) => {
             const status = user.payments.find((payment) => payment.status === 'unpaid') ? 'Unpaid' : 'Payed';
@@ -385,6 +523,7 @@ class HomePage extends Component {
                   <Typography component="p">
                     <span>Office</span>: { user.office ? user.office.name : 'Unassigned' } <br />
                     <span>Team Members</span>: { user.members.length + 1 } <br />
+                    <span>End date</span>: { user.endDate ? new Date(user.endDate).toLocaleDateString() : 'No contract' } <br />
                     <span>Subscription plan</span>: { user.plan.name } ({ user.plan.price } euro) <br />
                     <span>Account status</span>: { user.contractUrl ? 'Active' : 'Not active' }<br />
                     <span>Payment status</span>: <b>{ status }</b> for last month

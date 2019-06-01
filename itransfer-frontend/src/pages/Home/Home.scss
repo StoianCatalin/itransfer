@@ -1,5 +1,13 @@
 .container {
   padding: 20px;
+  .header-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  input[type=text] {
+    background-color: inherit;
+  }
   .user-card {
     width: calc(100%/4);
     margin: 30px 30px;

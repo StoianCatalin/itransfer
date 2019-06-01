@@ -53,13 +53,13 @@ class AdminDashboardLayout extends Component {
               >
                 <Tab disabled={this.props.account.role === 1} value="/dashboard" label="Dashboard" onClick={() => {this.navigate("/dashboard")}} />
                 <Tab disabled={this.props.account.role !== 3} value="/users" label="Staff" onClick={() => {this.navigate("/users")}} />
-                <Tab disabled={this.props.account.role === 2} value="/payments" label="Payments" onClick={() => {this.navigate("/payments")}} />
+                <Tab value="/payments" label="Payments" onClick={() => {this.navigate("/payments")}} />
                 <Tab disabled={this.props.account.role === 1} value="/events" label="Events" onClick={() => {this.navigate("/events")}} />
               </Tabs>
               <div className="page">
                 { this.props.account.role !== 1 && <PrivateRoute path={ this.props.account.role !== 1 ? "(/|/dashboard)/" : "/dashboard" } component={HomePage}/> }
                 { this.props.account.role === 3 && <PrivateRoute exact path="/users" component={UsersPage}/> }
-                { this.props.account.role !== 2 && <PrivateRoute path={ this.props.account.role === 1 ? "(/|/payments)/" : "/payments" } component={PaymentsPage}/> }
+                { <PrivateRoute path={ this.props.account.role === 1 ? "(/|/payments)/" : "/payments" } component={PaymentsPage}/> }
                 { this.props.account.role !== 1 && <PrivateRoute path="/events" component={EventsPage}/> }
                 <PrivateRoute path="/profile" component={ProfilePage}/>
               </div>

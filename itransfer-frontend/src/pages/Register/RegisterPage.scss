@@ -112,70 +112,70 @@
     display: flex;
     justify-content: center;
   }
-  .office-container {
-    width: 100%;
-    height: 300px;
-    border: 1px solid #d5e1ed;
+}
+.office-container {
+  width: 100%;
+  height: 300px;
+  border: 1px solid #d5e1ed;
+  display: flex;
+  flex-direction: row;
+  flex-flow: row wrap;
+  .office {
+    width: 25%;
+    border-right: 1px solid #d5e1ed;
     display: flex;
-    flex-direction: row;
-    flex-flow: row wrap;
-    .office {
-      width: 25%;
-      border-right: 1px solid #d5e1ed;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      &.busy {
-        background-color: #e06969;
-        cursor: not-allowed;
-      }
-      &.selected {
-        background-color: #db8036;
-      }
-      &.reserved {
-        background-color: #42c2f4;
-      }
-    }
-    .hall {
-      width: 100%;
-      border-top: 1px solid #d5e1ed;
-      border-bottom: 1px solid #d5e1ed;
-      background-color: #e2e2e2;
-    }
-  }
-  .legend {
-    width: 100%;
-    .item {
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-end;
-      margin: 5px 0;
-    }
-    .taken, .selected, .free, .reserved {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      margin-left: 10px;
-    }
-    .taken {
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    &.busy {
       background-color: #e06969;
+      cursor: not-allowed;
     }
-    .selected {
+    &.selected {
       background-color: #db8036;
     }
-    .reserved {
+    &.reserved {
       background-color: #42c2f4;
     }
-    .free {
-      border: 1px solid #d5e1ed;
-    }
   }
-  .salect-profile {
-    margin-right: 30px;
+  .hall {
+    width: 100%;
+    border-top: 1px solid #d5e1ed;
+    border-bottom: 1px solid #d5e1ed;
+    background-color: #e2e2e2;
   }
-  .profile-input {
-    margin-top: 20px;
+}
+.legend {
+  width: 100%;
+  .item {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin: 5px 0;
   }
+  .taken, .selected, .free, .reserved {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+  }
+  .taken {
+    background-color: #e06969;
+  }
+  .selected {
+    background-color: #db8036;
+  }
+  .reserved {
+    background-color: #42c2f4;
+  }
+  .free {
+    border: 1px solid #d5e1ed;
+  }
+}
+.salect-profile {
+  margin-right: 30px;
+}
+.profile-input {
+  margin-top: 20px;
 }

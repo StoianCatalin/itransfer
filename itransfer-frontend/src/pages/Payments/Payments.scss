@@ -33,3 +33,9 @@
 .capitalize {
   text-transform: capitalize;
 }
+.header-payments {
+  display: flex;
+  justify-content: space-between;
+  padding-right: 20px;
+  padding-top: 30px;
+}

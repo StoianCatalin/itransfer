@@ -20,6 +20,8 @@ import Dialog from "@material-ui/core/Dialog";
 import {FilePond} from "react-filepond";
 import PaymentService from "../../services/payment.service";
 import UserService from "../../services/user.service";
+import Fab from '@material-ui/core/Fab';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 
 class PaymentsPage extends Component {
 
@@ -62,6 +64,25 @@ class PaymentsPage extends Component {
     });
   }
 
+  exportToCSV() {
+    let csvContent = "data:text/csv;charset=utf-8,Id,Name,Start date,Paid date,User name,Amount,Method,Status\r\n";
+    this.state.shownPayments.forEach((payment) => {
+      const date = new Date(payment.startDate);
+      const startDate = date.toLocaleString('en-us', { month: 'long' }) + ' ' +  date.toLocaleString('en-us', { year: 'numeric' });
+      const date2 = new Date(payment.payedDate);
+      const payedDate = date2.toLocaleString('en-us', { month: 'long' }) + ' ' +  date2.toLocaleString('en-us', { year: 'numeric' });
+      let row = `${payment.id},${payment.name},${startDate},${payedDate},${payment.user.full_name},${payment.amount},${payment.payedMethod ? payment.payedMethod : '-'},${payment.status}`;
+      csvContent += row + "\r\n";
+    });
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "payments.csv");
+    document.body.appendChild(link); // Required for FF
+
+    link.click();
+  }
+
   closePaymentModal = () => {
     this.fetchPayments();
     this.fetchUsers();
@@ -102,23 +123,28 @@ class PaymentsPage extends Component {
   render() {
     return (
       <div className="payments-container">
-        <FormControl className="select-user">
-          <Select
-            value={this.state.filterPaymentsBy}
-            onChange={this.handleChangeUser}
-            inputProps={{
-              name: 'users',
-              id: 'users-simple',
-            }}
-          >
-            <MenuItem value={0}>All</MenuItem>
-            { this.state.users.map((user) => {
-              return (
-                <MenuItem value={user.id}>{ user.full_name }</MenuItem>
-              );
-            }) }
-          </Select>
-        </FormControl>
+        <div className="header-payments">
+          <FormControl className="select-user">
+            <Select
+              value={this.state.filterPaymentsBy}
+              onChange={this.handleChangeUser}
+              inputProps={{
+                name: 'users',
+                id: 'users-simple',
+              }}
+            >
+              <MenuItem value={0}>All</MenuItem>
+              { this.state.users.map((user) => {
+                return (
+                  <MenuItem value={user.id}>{ user.full_name }</MenuItem>
+                );
+              }) }
+            </Select>
+          </FormControl>
+          <Fab color="primary" aria-label="Export" onClick={() => { this.exportToCSV(); }}>
+            <CloudDownloadIcon />
+          </Fab>
+        </div>
         <Table>
           <TableHead>
             <TableRow>
@@ -148,7 +174,7 @@ class PaymentsPage extends Component {
                   <TableCell align="left">{ payment.payedMethod ? payment.payedMethod : '-' }</TableCell>
                   <TableCell className="capitalize" align="left">{ payment.status }</TableCell>
                   <TableCell component="th" scope="row">
-                    <IconButton aria-label="Edit" onClick={() => { this.openPaymentModal(payment); }}>
+                    <IconButton disabled={ this.props.account.role === 2 } aria-label="Edit" onClick={() => { this.openPaymentModal(payment); }}>
                       <Icon>assignment</Icon>
                     </IconButton>
                   </TableCell>

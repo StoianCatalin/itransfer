@@ -34,7 +34,7 @@ router.get('/', isAuthenticated, hasSecretarAccess, async (ctx, next) => {
   await next();
 });
 
-router.post('/', isAuthenticated, hasAdminAccess, async (ctx, next) => {
+router.post('/', isAuthenticated, hasSecretarAccess, async (ctx, next) => {
   const payload = ctx.request.body;
   const userCommands = new UserCommands();
   const response = await userCommands.saveUser(payload);
