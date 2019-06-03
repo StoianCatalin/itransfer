@@ -16,10 +16,21 @@
     max-width: 800px;
     height: 450px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column !important;
     p {
       text-align: center;
       width: 100%;
+    }
+  }
+  .authentication-container {
+    text-align: center;
+    .authentication {
+      &.green {
+        color: #3a9e51;
+      }
+      &.red {
+        color: #d34434;
+      }
     }
   }
   .user-info {

@@ -11,6 +11,7 @@ const plansController = require('./controllers/plans.controller');
 const paymentsController = require('./controllers/payments.controller');
 const eventsController = require('./controllers/events.controller');
 const PaymentJob = require('./jobs/payment.job');
+const { initSocket } = require('./socket');
 const fs = require('fs');
 const app = new Koa();
 const port = 3001;
@@ -76,4 +77,7 @@ PaymentJob.run();
 
 const server = http.createServer(app.callback());
 server.listen(port);
+
+initSocket(server);
+
 console.log(`Server running on ${port}`);

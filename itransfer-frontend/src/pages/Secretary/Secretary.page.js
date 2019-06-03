@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Card } from "@material-ui/core";
-import './GuardPage.scss';
+import './SecretaryPage.scss';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {loginUser} from "../../actions/user";
@@ -8,95 +8,37 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import {closeSnackbar, openSnackbar} from "../../actions/snackbar";
-import QrReader from 'react-qr-reader'
-import UserService from "../../services/user.service";
 import Button from "@material-ui/core/Button";
-import axios from 'axios';
+import io from 'socket.io-client';
+import {baseUrl} from "../../common/config";
 
-class GuardPage extends Component {
+class SecretaryPage extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             result: 'Waiting to scan',
             user: {},
-            authenticated: false,
         };
-        this.userService = new UserService();
+        this.socket = io(baseUrl);
+
+      this.socket.on('connect', () => {
+        this.socket.on('scan', (data) => {
+          this.setState({
+            user: data
+          })
+        });
+      });
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
         this.setState({ ...nextProps });
     }
 
-    handleScan = data => {
-        if (data) {
-            try {
-                const payload = JSON.parse(data);
-                if (!payload.userId) {
-                    this.props.openSnackbar('Error during the scanning');
-                    setTimeout(() => {
-                        this.props.closeSnackbar();
-                    });
-                    return;
-                }
-                this.userService.guardCheckUser(payload.userId).then((response) => {
-                    if (response.status === 200) {
-                        if (response.data.token) {
-                            axios.defaults.headers.common['token'] = response.data.token;
-                            this.setState({
-                                authenticated: true,
-                            });
-                        }
-                        this.setState({
-                            user: response.data,
-                        });
-                    } else {
-                        this.props.openSnackbar('Error during the scanning');
-                        setTimeout(() => {
-                            this.props.closeSnackbar();
-                        });
-                    }
-                });
-            } catch (e) {
-                console.log(e);
-                this.setState({
-                    user: {}
-                });
-                this.props.openSnackbar('Error during the scanning');
-                setTimeout(() => {
-                    this.props.closeSnackbar();
-                });
-            }
-        }
-    };
-
-    handleError = err => {
-        console.error(err)
-    };
-
-    reset = () => {
-        this.setState({
-            user: {},
-        })
-    };
-
     render() {
         return (
           <div className="guard-page">
-              <div className="qrcode-container">
-                  <QrReader
-                    className="qr-reader"
-                    delay={500}
-                    onError={this.handleError}
-                    onScan={this.handleScan}
-                    style={{ width: '20%' }}
-                  />
-              </div>
               <Card className="container">
-                  <div className="authentication-container">
-                      Access: <span className={"authentication " + (this.state.authenticated ? 'green' : 'red')}>{ this.state.authenticated ? 'Granted' : 'Denied' }</span> <br />
-                  </div>
                   { this.state.user.id ? (
                     <div className="user-info">
                         <p><span>Name</span>: { this.state.user.full_name }</p>
@@ -105,12 +47,14 @@ class GuardPage extends Component {
                         <p><span>Account status</span>: { this.state.user.status }</p>
                         <p><span>Grace period (last day)</span>: { this.state.user.last_date ? new Date(this.state.user.last_date).toLocaleDateString() : 'Account is active.' }</p>
                         <p><span>Office ID / Office name</span>: { this.state.user.officeId } / { this.state.user.officeName }</p>
+                        <p><span>Entered at</span>: { new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString() }</p>
                         <h5>Team members</h5>
                         { this.state.user.members.length > 0 ? this.state.user.members.map((member) => {
                             return (
                               <p className="team-mem">Name: { member.name } / Email: { member.email || 'Email is not set' }</p>
                             );
                         }) : <p>No team members</p> }
+                        <Button variant="outlined" color="primary" onClick={this.reset}>Reset</Button>
                     </div>
                   ) : <p>{ this.state.result }</p> }
               </Card>
@@ -162,6 +106,6 @@ const mapStateToProps = state => {
     }
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(GuardPage))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SecretaryPage))
 
 

@@ -13,6 +13,7 @@ import DashboardLayout from "./components/layout/Dashboard.layout";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { history } from './reducers/history';
 import 'react-inputs-validation/lib/react-inputs-validation.min.css';
+import SecretaryPage from './pages/Secretary/Secretary.page';
 
 const store = configureStore({});
 
@@ -24,6 +25,7 @@ class App extends Component {
         <Router history={history}>
           <Switch>
             <PublicRoute exact path="/gardian" component={GuardPage} />
+            <PublicRoute exact path="/live" component={SecretaryPage} />
             <PublicRoute exact path="/login" component={LoginPage} />
             <PublicRoute exact path="/register" component={RegisterPage} />
             <PrivateRoute path="/" component={DashboardLayout} />

@@ -51,4 +51,8 @@ export default class EventsService {
     return axios.post(`${this.baseUrl}/events/signup/${eventId}`);
   }
 
+  getAllAccessLogs() {
+    return axios.get(`${this.baseUrl}/logs`);
+  }
+
 }

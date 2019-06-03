@@ -1,7 +1,7 @@
 const CoreRouter = require('koa-router');
 const isAuthenticated = require('../middlewares/authentication.middleware').isAuthenticated;
 const { EventsCommands } = require('../commands/Events.commands');
-const { Meeting, Room, Office, User, Attender, Event } = require('../models/DatabaseConnection');
+const { Meeting, Room, Office, User, Attender, Event, OfficeAccess } = require('../models/DatabaseConnection');
 const { hasSecretarAccess } = require('../middlewares/role.middleware');
 
 const router = new CoreRouter();
@@ -32,7 +32,7 @@ router.get('/offices',async (ctx, next) => {
   await next();
 });
 
-router.get('/', isAuthenticated,async (ctx, next) => {
+router.get('/',async (ctx, next) => {
   const meetings = await Meeting.findAll({
     where: { userId: ctx.state.user.id },
     raw: true,
@@ -54,7 +54,7 @@ router.delete('/meeting/:id', isAuthenticated, async (ctx, next) => {
   ctx.response.body = response;
 });
 
-router.get('/events', isAuthenticated, async (ctx, next) => {
+router.get('/events', async (ctx, next) => {
   const events = await Event.findAll({ raw: true });
   for (const event of events) {
     event.attenders = await Attender.findAll({ where: { eventId: event.id }, raw: true });
@@ -118,6 +118,14 @@ router.post('/events/signup/:eventId', isAuthenticated, async  (ctx, next) => {
   await Attender.create({ userId, eventId });
   ctx.response.status = 200;
   ctx.response.body = { message: 'You were sign-up successfully to this event!' };
+});
+
+router.get('/logs', isAuthenticated, hasSecretarAccess, async (ctx, next) => {
+  const logs = await OfficeAccess.findAll({
+    include: [User, Office]
+  });
+  ctx.response.body = logs;
+  await next();
 });
 
 module.exports = { router };

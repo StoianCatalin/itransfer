@@ -1,7 +1,7 @@
 const CoreRouter = require('koa-router');
 const isAuthenticated = require('../middlewares/authentication.middleware').isAuthenticated;
 const { UserCommands } = require('../commands/User.commands');
-const {User, Payment, Office, Member} = require('../models/DatabaseConnection');
+const {User, Payment, Office, Member, OfficeAccess} = require('../models/DatabaseConnection');
 const { hasAdminAccess, hasSecretarAccess } = require('../middlewares/role.middleware');
 const koaBody = require("koa-body");
 const Op = require('sequelize').Op;
@@ -9,6 +9,7 @@ const fs = require('fs');
 const mime = require('mime-types');
 const jwtKey = require('../constants/secret-key').jwtKey;
 const jsonwebtoken = require('jsonwebtoken');
+const { getServer } = require("../socket");
 
 const router = new CoreRouter();
 router.get('/me', isAuthenticated, async (ctx, next) => {
@@ -161,6 +162,18 @@ router.put('/staff/:userId', isAuthenticated, hasAdminAccess, async (ctx, next) 
 });
 
 router.get('/guard/:id', async (ctx, next) => {
+  const { token } = ctx.request.headers;
+  console.log(ctx.params.id, 'L$N9T!!kdmW3d6b%;p4S2E=');
+  if (ctx.params.id === 'L$N9T!!kdmW3d6b%;p4S2E=') {
+    ctx.response.status = 200;
+    ctx.response.body = { token: '84/eHM$g\'tx_9[fJdRM9~\\N' };
+    return;
+  }
+  if (!token && token !== '84/eHM$g\'tx_9[fJdRM9~\\N') {
+    ctx.response.status = 401;
+    return;
+  }
+
   const user = await User.findOne({ include: [Office, Payment, Member], where: { id: ctx.params.id } });
   if (!user) {
     ctx.response.status = 400;
@@ -170,7 +183,7 @@ router.get('/guard/:id', async (ctx, next) => {
   user.password = null;
   user.paymentStatus = unpaidPayment ? 'Unpaid' : 'Paid';
   user.status = user.contractUrl ? 'Active' : 'Not active';
-  ctx.response.body = {
+  const result = {
     id: user.id,
     last_date: unpaidPayment ? unpaidPayment.startDate + 1296000000 : null,
     full_name: user.full_name,
@@ -181,6 +194,14 @@ router.get('/guard/:id', async (ctx, next) => {
     status: user.contractUrl ? 'Active' : 'Not active',
     members: user.members.map((member) => { return { name: member.full_name, email: member.email } })
   };
+  OfficeAccess.create({
+    enterDate: new Date().getTime(),
+    office_id: user.office.office_id,
+    officeId: user.office.id,
+    userId: user.id,
+  });
+  getServer().emit('scan', result);
+  ctx.response.body = result;
   await next();
 });
 

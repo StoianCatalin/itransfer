@@ -47,7 +47,8 @@ Payment.belongsTo(User);
 Attender.belongsTo(User);
 Attender.belongsTo(Event);
 Event.hasMany(Attender);
-Office.hasMany(OfficeAccess);
+OfficeAccess.belongsTo(User);
+OfficeAccess.belongsTo(Office);
 
 module.exports = {
   sequelize,

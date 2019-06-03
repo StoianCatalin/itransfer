@@ -1,0 +1,15 @@
+.access-logs-container {
+  width: 100%;
+  padding: 20px;
+  input[type=text] {
+    background-color: inherit;
+  }
+  .logs-filter {
+    display: flex;
+    flex-direction: row;
+  }
+  .search-container {
+    margin-top: 16px;
+    margin-left: 20px;
+  }
+}

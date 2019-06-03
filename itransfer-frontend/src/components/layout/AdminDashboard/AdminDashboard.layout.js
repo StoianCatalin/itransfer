@@ -7,6 +7,7 @@ import HomePage from "../../../pages/Home/Home.page";
 import UsersPage from "../../../pages/Users/Users.page";
 import PaymentsPage from "../../../pages/Payments/Payments.page";
 import EventsPage from "../../../pages/Events/Events.page";
+import AccessLogsPage from "../../../pages/AccessLogs/AccessLogs.page";
 import {connect} from "react-redux";
 import ProfilePage from '../../../pages/Profile/Profile.page';
 import Header from '../../header/Header.component';
@@ -55,12 +56,14 @@ class AdminDashboardLayout extends Component {
                 <Tab disabled={this.props.account.role !== 3} value="/users" label="Staff" onClick={() => {this.navigate("/users")}} />
                 <Tab value="/payments" label="Payments" onClick={() => {this.navigate("/payments")}} />
                 <Tab disabled={this.props.account.role === 1} value="/events" label="Events" onClick={() => {this.navigate("/events")}} />
+                <Tab disabled={this.props.account.role === 1} value="/access-logs" label="Access Logs" onClick={() => {this.navigate("/access-logs")}} />
               </Tabs>
               <div className="page">
                 { this.props.account.role !== 1 && <PrivateRoute path={ this.props.account.role !== 1 ? "(/|/dashboard)/" : "/dashboard" } component={HomePage}/> }
                 { this.props.account.role === 3 && <PrivateRoute exact path="/users" component={UsersPage}/> }
                 { <PrivateRoute path={ this.props.account.role === 1 ? "(/|/payments)/" : "/payments" } component={PaymentsPage}/> }
                 { this.props.account.role !== 1 && <PrivateRoute path="/events" component={EventsPage}/> }
+                { this.props.account.role !== 1 && <PrivateRoute path="/access-logs" component={AccessLogsPage}/> }
                 <PrivateRoute path="/profile" component={ProfilePage}/>
               </div>
             </div>
