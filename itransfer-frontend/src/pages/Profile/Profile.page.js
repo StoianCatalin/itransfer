@@ -12,9 +12,9 @@ class ProfilePage extends Component {
     this.state = {
       open: false,
       form: {
-        name: '',
+        name: this.props.form.full_name,
         password: '',
-        email: '',
+        email: this.props.form.email,
       },
       formValidation: {
         name: true,
@@ -164,7 +164,7 @@ class ProfilePage extends Component {
 
 const mapStateToProps = state => {
   return {
-
+    form: { ...state.user }
   }
 };
 

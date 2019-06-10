@@ -32,7 +32,7 @@ router.get('/offices',async (ctx, next) => {
   await next();
 });
 
-router.get('/',async (ctx, next) => {
+router.get('/', isAuthenticated, async (ctx, next) => {
   const meetings = await Meeting.findAll({
     where: { userId: ctx.state.user.id },
     raw: true,
