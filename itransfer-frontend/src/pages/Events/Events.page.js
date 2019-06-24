@@ -304,7 +304,7 @@ class EventsPage extends Component {
           <DialogTitle id="alert-dialog-title">{"Are you sure?"}</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              This action can not undo.
+              This action can not be undone.
             </DialogContentText>
           </DialogContent>
           <DialogActions>

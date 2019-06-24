@@ -86,7 +86,7 @@ class PaymentsPage extends Component {
   closePaymentModal = () => {
     this.fetchPayments();
     this.fetchUsers();
-    this.setState({ open: false, selectedPayment: {} });
+    this.setState({ open: false, selectedPayment: {}, filterPaymentsBy: 0 });
   };
 
   openPaymentModal = (payment) => {

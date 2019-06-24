@@ -2,23 +2,28 @@
   "offices": [
     {
       "name": "Office 1",
-      "office_id": 1
+      "office_id": 1,
+      "capacity": 2
     },
     {
       "name": "Office 2",
-      "office_id": 2
+      "office_id": 2,
+      "capacity": 5
     },
     {
       "name": "Office 3",
-      "office_id": 3
+      "office_id": 3,
+      "capacity": 2
     },
     {
       "name": "Office 4",
-      "office_id": 4
+      "office_id": 4,
+      "capacity": 4
     },
     {
       "name": "Office 5",
-      "office_id": 5
+      "office_id": 5,
+      "capacity": 4
     },
     {
       "name": "Office 6",
@@ -31,6 +36,102 @@
     {
       "name": "Office 8",
       "office_id": 8
+    },
+    {
+      "name": "Office 9",
+      "office_id": 9
+    },
+    {
+      "name": "Office 10",
+      "office_id": 10
+    },
+    {
+      "name": "Office 11",
+      "office_id": 11
+    },
+    {
+      "name": "Office 12",
+      "office_id": 12
+    },
+    {
+      "name": "Office 13",
+      "office_id": 13
+    },
+    {
+      "name": "Office 14",
+      "office_id": 14
+    },
+    {
+      "name": "Office 15",
+      "office_id": 15
+    },
+    {
+      "name": "Office 16",
+      "office_id": 16
+    },
+    {
+      "name": "Office 17",
+      "office_id": 17
+    },
+    {
+      "name": "Office 18",
+      "office_id": 18
+    },
+    {
+      "name": "Office 19",
+      "office_id": 19
+    },
+    {
+      "name": "Office 20",
+      "office_id": 20
+    },
+    {
+      "name": "Office 21",
+      "office_id": 21
+    },
+    {
+      "name": "Office 22",
+      "office_id": 22
+    },
+    {
+      "name": "Office 23",
+      "office_id": 23
+    },
+    {
+      "name": "Office 24",
+      "office_id": 24
+    },
+    {
+      "name": "Office 25",
+      "office_id": 25
+    },
+    {
+      "name": "Office 26",
+      "office_id": 26
+    },
+    {
+      "name": "Office 27",
+      "office_id": 27
+    },
+    {
+      "name": "Office 28",
+      "office_id": 28
+    },
+    {
+      "name": "Office 29",
+      "office_id": 29
+    },
+    {
+      "name": "Office 30",
+      "office_id": 30
+    },
+    {
+      "name": "Office 31",
+      "office_id": 31
+    },
+    {
+      "name": "Office 32",
+      "office_id": 32
     }
   ]
 }

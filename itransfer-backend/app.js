@@ -50,7 +50,7 @@ sequelize
         cnp: '1',
         identity_number: '1',
         address: '1',
-        email: 'admin@itransfer.ro',
+        email: 'admin@itransfer.space',
         password: md5('admin123'),
         role: 3,
         startDate: new Date().getTime(),

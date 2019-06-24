@@ -87,7 +87,7 @@ class GuardPage extends Component {
               <div className="qrcode-container">
                   <QrReader
                     className="qr-reader"
-                    delay={500}
+                    delay={5000}
                     onError={this.handleError}
                     onScan={this.handleScan}
                     style={{ width: '20%' }}
