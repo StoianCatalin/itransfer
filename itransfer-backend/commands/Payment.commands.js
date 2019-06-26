@@ -102,23 +102,23 @@ class PaymentCommands {
         subject: 'Payment confirmation',
         html: `
      <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
-    <table class="es-content-body" width="600" cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center">
+    <table width="600" cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center">
         <tbody>
             <tr>
-                <td class="esd-structure es-p20t es-p40b es-p35r es-p35l" esd-custom-block-id="7685" align="left">
+                <td align="left">
                     <table width="100%" cellspacing="0" cellpadding="0">
                         <tbody>
                             <tr>
-                                <td class="esd-container-frame" width="530" valign="top" align="center">
+                                <td width="530" valign="top" align="center">
                                     <table width="100%" cellspacing="0" cellpadding="0">
                                         <tbody>
                                             <tr>
-                                                <td class="esd-block-text" align="center">
+                                                <td align="center">
                                                     <h2>Payment information</h2>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="esd-block-text es-p20t es-p10b" align="center">
+                                                <td align="center">
                                                     <p style="font-size: 16px; color: #777777;">User name: ${payment.user.full_name}</p>
                                                     <p style="font-size: 16px; color: #777777;">Price: ${payment.amount} euro</p>
                                                     <p style="font-size: 16px; color: #777777;">Plan: ${payment.name}</p>
@@ -130,7 +130,7 @@ class PaymentCommands {
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="esd-block-spacer es-p20t es-p15b" align="center">
+                                                <td align="center">
                                                     <table width="100%" height="100%" cellspacing="0" cellpadding="0" border="0">
                                                         <tbody>
                                                             <tr>
@@ -141,7 +141,7 @@ class PaymentCommands {
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="esd-block-button es-p10t es-p20b es-p10r es-p10l" align="center"> <span>Copyright &copy; iTransfer 2019</span> </td>
+                                                <td align="center"> <span>Copyright &copy; iTransfer 2019</span> </td>
                                             </tr>
                                         </tbody>
                                     </table>
