@@ -12,7 +12,7 @@
     "filepond-plugin-file-validate-type": "^1.2.4",
     "history": "^4.7.2",
     "material-ui-pickers": "^2.2.4",
-    "node-sass": "^4.11.0",
+    "node-sass": "^7.0.0",
     "qrcode.react": "^0.9.3",
     "react": "^16.7.0",
     "react-credit-card-primitives": "^1.5.1",
